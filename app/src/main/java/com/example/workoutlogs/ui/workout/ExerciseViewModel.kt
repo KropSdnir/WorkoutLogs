@@ -1,6 +1,6 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/ExerciseViewModel.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-09 08:00:00
+// Timestamp: Updated on 2025-05-09 13:30:00
 // Scope: ViewModel for managing exercise data in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
@@ -13,6 +13,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.workoutlogs.data.model.Exercise
 import com.example.workoutlogs.data.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,11 +24,15 @@ class ExerciseViewModel @Inject constructor(
     private val exerciseRepository: ExerciseRepository
 ) : ViewModel() {
     var name by mutableStateOf("")
-        private set
     var category by mutableStateOf("")
-        private set
     var notes by mutableStateOf("")
-        private set
+
+    val exercises: StateFlow<List<Exercise>> = exerciseRepository.getAllExercises()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     fun updateName(newName: String) {
         name = newName
@@ -48,6 +55,10 @@ class ExerciseViewModel @Inject constructor(
                     notes = notes.takeIf { it.isNotBlank() }
                 )
                 exerciseRepository.insertExercise(exercise)
+                println("Exercise saved: $exercise") // Debug log
+                name = ""
+                category = ""
+                notes = ""
                 onSuccess()
             }
         }
