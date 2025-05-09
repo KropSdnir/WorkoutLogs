@@ -19,7 +19,7 @@ import com.example.workoutlogs.ui.simple_calendar.SimpleCalendarView
 import kotlinx.coroutines.launch
 
 // File: app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
-// Timestamp: Updated on 2025-05-09 05:34:00
+// Timestamp: Updated on 2025-05-09 05:36:00
 // Scope: Composable for the home screen with tab navigation and Room data
 
 @Composable

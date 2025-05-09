@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 // File: app/src/main/java/com/example/workoutlogs/ui/home/HomeViewModel.kt
-// Timestamp: Updated on 2025-05-09 05:34:00
+// Timestamp: Updated on 2025-05-09 05:36:00
 // Scope: ViewModel for fetching CalendarEntry data for HomeScreen
 
 @HiltViewModel
@@ -21,6 +21,6 @@ class HomeViewModel @Inject constructor(
         calendarRepository.getAllEntries().stateIn(
             scope = viewModelScope,
             started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList<CalendarEntry>()
+            initialValue = emptyList()
         )
 }
