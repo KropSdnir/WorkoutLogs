@@ -1,6 +1,6 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-09 07:32:00
+// Timestamp: Updated on 2025-05-09 07:45:00
 // Scope: Composable for the workout screen with tab navigation and Room data in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
@@ -36,7 +36,6 @@ fun WorkoutScreen(
     val scope = rememberCoroutineScope()
     var selectedTab by remember { mutableStateOf(0) }
     val workoutEntries by viewModel.workoutEntries.collectAsState()
-    var showMenu by remember { mutableStateOf(false) }
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -74,24 +73,10 @@ fun WorkoutScreen(
                 )
             },
             floatingActionButton = {
-                Box {
-                    FloatingActionButton(
-                        onClick = { showMenu = true }
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Workout")
-                    }
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Exercises") },
-                            onClick = {
-                                navController.navigate("workout_exercises")
-                                showMenu = false
-                            }
-                        )
-                    }
+                FloatingActionButton(
+                    onClick = { navController.navigate("workout_exercises") }
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Add Exercises")
                 }
             }
         ) { innerPadding ->
