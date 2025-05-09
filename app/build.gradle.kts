@@ -1,7 +1,3 @@
-// File: app/build.gradle.kts
-// Timestamp: Updated on 2025-05-09 04:49:00
-// Scope: App module build file for WorkoutLogs, defining dependencies and KSP configurations
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -45,33 +41,21 @@ android {
 }
 
 dependencies {
-    // Jetpack Compose
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
-
-    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
-
-    // Navigation
     implementation(libs.androidx.navigation.compose)
-
-    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
-
-    // Lifecycle and ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
-
-    // Room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
-
-    // Testing
+    implementation(libs.androidx.compose.material.icons.extended)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)

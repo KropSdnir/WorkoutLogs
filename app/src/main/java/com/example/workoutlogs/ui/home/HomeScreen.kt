@@ -1,71 +1,157 @@
-// File: app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
-// Timestamp: Updated on 2025-05-09 16:00:00
-// Scope: Main screen displaying NavBar, SimpleCalendarView, SlideOutMenu (DrawerContent), and Statistics/History tabs
-
 package com.example.workoutlogs.ui.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
+import com.example.workoutlogs.data.database.CalendarEntry
 import com.example.workoutlogs.ui.common.NavBar
-import com.example.workoutlogs.ui.common.SimpleCalendarView
-import com.example.workoutlogs.ui.navigation.DrawerContent
+import com.example.workoutlogs.ui.simple_calendar.SimpleCalendarView
+import kotlinx.coroutines.launch
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(
-    navController: NavHostController
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val viewModel: HomeViewModel = hiltViewModel()
-    val showCalendar = remember { mutableStateOf(false) }
-    val showMenu = remember { mutableStateOf(false) }
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    var selectedTab by remember { mutableStateOf(0) }
+    val workoutEntries by viewModel.workoutEntries.collectAsState()
 
-    Scaffold(
-        topBar = {
-            NavBar(
-                onMenuClick = { showMenu.value = true },
-                onCalendarClick = { showCalendar.value = !showCalendar.value },
-                onNavigateToExerciseDetail = { navController.navigate("exercise_detail") },
-                onNavigateToCardioDetail = { navController.navigate("cardio_detail") }
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp)
-        ) {
-            if (showCalendar.value) {
-                SimpleCalendarView()
-            }
+    ModalNavigationDrawer(
+        drawerContent = {
             DrawerContent(
-                isVisible = showMenu.value,
-                onDismiss = { showMenu.value = false },
-                navController = navController
+                onItemClick = { route: String ->
+                    scope.launch {
+                        drawerState.close()
+                        navController.navigate(route)
+                    }
+                }
             )
-            TabRow(selectedTabIndex = 0) {
-                Tab(
-                    selected = true,
-                    onClick = { /* Statistics placeholder */ },
-                    text = { Text("Statistics", style = MaterialTheme.typography.labelLarge) }
+        },
+        drawerState = drawerState
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("WorkoutLogs") },
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu"
+                            )
+                        }
+                    }
                 )
-                Tab(
-                    selected = false,
-                    onClick = { /* History placeholder */ },
-                    text = { Text("History", style = MaterialTheme.typography.labelLarge) }
-                )
+            },
+            bottomBar = {
+                NavBar(navController = navController)
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                // Tab Row for Home, Statistics, History
+                TabRow(selectedTabIndex = selectedTab) {
+                    listOf("Home", "Statistics", "History").forEachIndexed { index, title ->
+                        Tab(
+                            text = { Text(title) },
+                            selected = selectedTab == index,
+                            onClick = { selectedTab = index }
+                        )
+                    }
+                }
+
+                // Tab Content
+                when (selectedTab) {
+                    0 -> {
+                        // Home Tab: Show Calendar
+                        SimpleCalendarView()
+                    }
+                    1 -> {
+                        // Statistics Tab: Simple Bar Chart
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Workout Frequency (Mock Data)",
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                            // Mock data: workouts per day of week
+                            val workoutCounts = listOf(3, 5, 2, 4, 6, 1, 0)
+                            val days = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                workoutCounts.forEachIndexed { index, count ->
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .width(30.dp)
+                                                .height((count * 20).dp)
+                                                .background(MaterialTheme.colorScheme.primary)
+                                        )
+                                        Text(
+                                            text = days[index],
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    2 -> {
+                        // History Tab: List of Workouts from Room
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Workout History",
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                            LazyColumn {
+                                items(workoutEntries) { entry ->
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp),
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = "${entry.date}: ${entry.workoutName} - ${entry.sets} sets",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            modifier = Modifier.padding(16.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

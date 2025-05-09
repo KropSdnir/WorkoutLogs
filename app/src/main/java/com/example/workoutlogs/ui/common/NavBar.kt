@@ -1,73 +1,48 @@
-// File: app/src/main/java/com/example/workoutlogs/ui/common/NavBar.kt
-// Timestamp: Updated on 2025-05-09 14:00:00
-// Scope: Top navigation bar with Menu icon (left), title, and Calendar/Plus icons (right)
-
 package com.example.workoutlogs.ui.common
 
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.res.painterResource
-import com.example.workoutlogs.R
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Info
 
 @Composable
-fun NavBar(
-    onMenuClick: () -> Unit,
-    onCalendarClick: () -> Unit,
-    onNavigateToExerciseDetail: () -> Unit,
-    onNavigateToCardioDetail: () -> Unit
-) {
-    val showPlusOptions = remember { mutableStateOf(false) }
+@OptIn(ExperimentalMaterial3Api::class)
+fun NavBar(navController: NavController) {
+    val items = listOf("home", "settings")
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = currentBackStackEntry?.destination?.route
 
-    TopAppBar(
-        title = { Text("Home", style = MaterialTheme.typography.titleLarge) },
-        navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_menu),
-                    contentDescription = "Menu"
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = onCalendarClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_calendar),
-                    contentDescription = "Calendar"
-                )
-            }
-            IconButton(onClick = { showPlusOptions.value = true }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = "Add"
-                )
-            }
-            DropdownMenu(
-                expanded = showPlusOptions.value,
-                onDismissRequest = { showPlusOptions.value = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Weight") },
-                    onClick = {
-                        showPlusOptions.value = false
-                        onNavigateToExerciseDetail()
+    NavigationBar {
+        items.forEach { item ->
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = when (item) {
+                            "home" -> Icons.Default.Home
+                            "settings" -> Icons.Default.Settings
+                            else -> Icons.Default.Info
+                        },
+                        contentDescription = item
+                    )
+                },
+                label = { Text(item.replaceFirstChar { it.uppercase() }) },
+                selected = currentDestination == item,
+                onClick = {
+                    navController.navigate(item) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                )
-                DropdownMenuItem(
-                    text = { Text("Cardio") },
-                    onClick = {
-                        showPlusOptions.value = false
-                        onNavigateToCardioDetail()
-                    }
-                )
-            }
+                }
+            )
         }
-    )
+    }
 }
