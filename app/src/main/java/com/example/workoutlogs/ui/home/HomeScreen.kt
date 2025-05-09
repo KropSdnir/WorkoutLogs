@@ -13,14 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.workoutlogs.data.db.CalendarEntry
+import com.example.workoutlogs.data.model.CalendarEntry
 import com.example.workoutlogs.ui.common.NavBar
-import com.example.workoutlogs.ui.simple_calendar.SimpleCalendarView
+import com.example.workoutlogs.ui.common.SimpleCalendarView
 import kotlinx.coroutines.launch
 
 // File: app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
-// Timestamp: Updated on 2025-05-09 05:36:00
-// Scope: Composable for the home screen with tab navigation and Room data
+// Timestamp: Updated on 2025-05-09 06:12:00
+// Scope: Composable for the home screen with tab navigation and Room data in WorkoutLogs app
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)

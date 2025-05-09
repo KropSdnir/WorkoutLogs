@@ -1,5 +1,5 @@
 // File: app/build.gradle.kts
-// Timestamp: Updated on 2025-05-09 05:50:00
+// Timestamp: Updated on 2025-05-09 06:10:00
 // Scope: App module build file for WorkoutLogs, defining dependencies and KSP configurations
 
 plugins {
