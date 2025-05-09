@@ -1,5 +1,6 @@
 // File: settings.gradle.kts
-// Scope: Settings file for the project
+// Timestamp: Updated on 2025-05-09 04:49:00
+// Scope: Configures repositories and project structure for WorkoutLogs
 
 pluginManagement {
     repositories {
@@ -10,15 +11,10 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-    }
-    versionCatalogs {
-        create("libs") {
-            from(files("gradle/libs.versions.toml"))
-        }
     }
 }
 
