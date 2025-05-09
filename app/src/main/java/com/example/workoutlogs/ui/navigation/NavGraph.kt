@@ -1,3 +1,8 @@
+// File: app/src/main/java/com/example/workoutlogs/ui/navigation/NavGraph.kt
+// Version: 0.0.1 first full boot
+// Timestamp: Updated on 2025-05-09 07:32:00
+// Scope: Navigation graph setup for WorkoutLogs app
+
 package com.example.workoutlogs.ui.navigation
 
 import androidx.compose.runtime.Composable
@@ -6,10 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.workoutlogs.ui.home.HomeScreen
 import com.example.workoutlogs.ui.settings.SettingsScreen
-
-// File: app/src/main/java/com/example/workoutlogs/ui/navigation/NavGraph.kt
-// Timestamp: Updated on 2025-05-09 06:30:00
-// Scope: Navigation graph for WorkoutLogs app using Compose Navigation
+import com.example.workoutlogs.ui.workout.WorkoutScreen
+import com.example.workoutlogs.ui.workout.WorkoutExercisesScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -22,6 +25,12 @@ fun NavGraph(navController: NavHostController) {
         }
         composable("settings") {
             SettingsScreen(navController = navController)
+        }
+        composable("workout") {
+            WorkoutScreen(navController = navController)
+        }
+        composable("workout_exercises") {
+            WorkoutExercisesScreen(navController = navController)
         }
     }
 }

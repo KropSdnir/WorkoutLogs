@@ -1,9 +1,9 @@
-// File: app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
+// File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
 // Timestamp: Updated on 2025-05-09 07:32:00
-// Scope: Composable for the home screen with tab navigation and Room data in WorkoutLogs app
+// Scope: Composable for the workout exercises screen with tab navigation and Room data in WorkoutLogs app
 
-package com.example.workoutlogs.ui.home
+package com.example.workoutlogs.ui.workout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,12 +22,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.workoutlogs.data.model.CalendarEntry
 import com.example.workoutlogs.ui.common.SimpleCalendarView
+import com.example.workoutlogs.ui.home.HomeViewModel
 import com.example.workoutlogs.ui.navigation.DrawerContent
 import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun HomeScreen(
+fun WorkoutExercisesScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -52,8 +54,16 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Workout Logs") },
+                    title = { Text("Workout Exercises") },
                     navigationIcon = {
+                        IconButton(onClick = { navController.navigate("home") }) {
+                            Icon(
+                                imageVector = Icons.Default.Home,
+                                contentDescription = "Home"
+                            )
+                        }
+                    },
+                    actions = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(
                                 imageVector = Icons.Default.Menu,
@@ -75,14 +85,7 @@ fun HomeScreen(
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Weight") },
-                            onClick = {
-                                navController.navigate("workout")
-                                showMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Cardio") },
+                            text = { Text("Exercises") },
                             onClick = { showMenu = false } // Placeholder
                         )
                     }

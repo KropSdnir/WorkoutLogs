@@ -1,48 +1,46 @@
+// File: app/src/main/java/com/example/workoutlogs/ui/common/NavBar.kt
+// Version: 0.0.1 first full boot
+// Timestamp: Updated on 2025-05-09 09:00:00
+// Scope: Composable for bottom navigation bar in WorkoutLogs app
+
 package com.example.workoutlogs.ui.common
 
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun NavBar(navController: NavController) {
-    val items = listOf("home", "settings")
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = currentBackStackEntry?.destination?.route
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry.value?.destination?.route
 
     NavigationBar {
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        imageVector = when (item) {
-                            "home" -> Icons.Default.Home
-                            "settings" -> Icons.Default.Settings
-                            else -> Icons.Default.Info
-                        },
-                        contentDescription = item
-                    )
-                },
-                label = { Text(item.replaceFirstChar { it.uppercase() }) },
-                selected = currentDestination == item,
-                onClick = {
-                    navController.navigate(item) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+            label = { Text("Home") },
+            selected = currentRoute == "home",
+            onClick = {
+                navController.navigate("home") {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
                 }
-            )
-        }
+            }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+            label = { Text("Settings") },
+            selected = currentRoute == "settings",
+            onClick = {
+                navController.navigate("settings") {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
+                }
+            }
+        )
     }
 }
