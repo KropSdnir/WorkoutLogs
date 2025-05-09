@@ -8,7 +8,7 @@ import com.example.workoutlogs.data.db.dao.CalendarDao
 import com.example.workoutlogs.data.model.CalendarEntry
 
 // File: app/src/main/java/com/example/workoutlogs/data/db/WorkoutLogsDatabase.kt
-// Timestamp: Updated on 2025-05-09 06:10:00
+// Timestamp: Updated on 2025-05-09 06:45:00
 // Scope: Room database definition for WorkoutLogs app
 
 @Database(entities = [CalendarEntry::class], version = 1, exportSchema = false)
