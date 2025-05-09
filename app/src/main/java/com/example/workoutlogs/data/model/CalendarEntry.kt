@@ -1,17 +1,15 @@
+// File: app/src/main/java/com/example/workoutlogs/data/model/CalendarEntry.kt
+// Version: 0.0.1 first full boot
+// Timestamp: Updated on 2025-05-09 08:15:00
+// Scope: Room entity for calendar entries in WorkoutLogs app
+
 package com.example.workoutlogs.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import com.example.workoutlogs.data.db.converters.LocalDateConverter
 import java.time.LocalDate
 
-// File: app/src/main/java/com/example/workoutlogs/data/model/CalendarEntry.kt
-// Timestamp: Updated on 2025-05-09 06:10:00
-// Scope: Room entity for storing workout log entries in WorkoutLogs app
-
 @Entity(tableName = "calendar_entries")
-@TypeConverters(LocalDateConverter::class)
 data class CalendarEntry(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: LocalDate,
