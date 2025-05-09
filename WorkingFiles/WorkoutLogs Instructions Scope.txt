@@ -26,7 +26,7 @@ Section B. [App Technical Scope]
 6.	Use Room (an Android library) for structured data like a list of tasks in a to-do app.
 7.	Use Model-View-ViewModel (for example: https://www.geeksforgeeks.org/mvvm-model-view-viewmodel-architecture-pattern-in-android/, but give your recommendation if you think you have better ideas in organization and structure).
 
-C. [File Structure]
+Section C. [File Structure]
 com.workoutlogs/
 ├── data/
 │   ├── model/
