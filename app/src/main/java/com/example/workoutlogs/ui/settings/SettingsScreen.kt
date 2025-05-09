@@ -1,5 +1,5 @@
 // File: WorkoutLogs/app/src/main/java/com/workoutlogs/MainActivity.kt
-// Timestamp: Updated on 2025-05-09 16:00:00
+// Timestamp: Updated on 2025-05-09 17:00:00
 // Scope: Main activity hosting the navigation graph with Compose
 package com.workoutlogs
 

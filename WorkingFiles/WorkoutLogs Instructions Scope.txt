@@ -1,4 +1,3 @@
-
 A. [Grok Logistics Scope]
 1.	Follow the instructions here: https://github.com/KropSdnir/WorkoutLogs/blob/master/WorkingFiles/WorkoutLogs%20Instructions%20Scope.txt
 2.	Unless instructed otherwise, when solving for errors or creating new codes, always refer to: https://github.com/KropSdnir/WorkoutLogs/tree/master for the most recent codebase and cross check the codebase to ensure integrity.
@@ -8,8 +7,7 @@ A. [Grok Logistics Scope]
 	4.2 New Kotlin Class File:Class, File, Interface, Data class, Enum class, Annotation, Kotlin script, or Object
 5.	Responses: label each response with a numeral order and a timestamp. At the end of the responses, provide a list of files that are modified or created.
 	5.1	All codes need to be in a downloadable file such as x-kotlin file, .kt or xml
-	5.2	If provide few lines of code, 1-5 lines, tell me exactly the line numbers to update or change.
-	5.3	In the downloadable file: add comment to the top of each file: full path, updated timestamp, and scope. 
+	5.2	In the downloadable file: add comment to the top of each file: full path, updated timestamp, and scope. 
 	5.4 Example: 	// File: app/src/main/java/com/example/workoutlogs/ui/workout/CategoriesScreen.kt
 					// Timestamp: Updated onill  2025-05-06 18:30:00
 					// Scope: should explain what the file does. For example: Manages category list shared with ExerciseDetailScreen and other screens
