@@ -1,23 +1,25 @@
-<!-- File: WorkoutLogs/app/src/main/AndroidManifest.xml -->
-<!-- Timestamp: Updated on 2025-05-09 16:00:00 -->
-<!-- Scope: Defines app metadata, permissions, and main activity -->
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.workoutlogs">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name=".WorkoutLogsApplication"
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.WorkoutLogs">
+        android:theme="@style/Theme.WorkoutLogs"
+        tools:targetApi="31">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.WorkoutLogs">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
