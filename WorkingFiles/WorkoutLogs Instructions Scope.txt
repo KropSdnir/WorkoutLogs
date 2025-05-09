@@ -1,0 +1,70 @@
+A. [Grok Logistics Scope]
+1.	Follow the instructions here: https://github.com/KropSdnir/WorkoutLogs/blob/master/WorkingFiles/WorkoutLogs%20Instructions%20Scope.txt
+2.	Unless instructed otherwise, when solving for errors or creating new codes, always refer to: https://github.com/KropSdnir/WorkoutLogs/tree/master for the most recent codebase and cross check the codebase to ensure integrity.
+3.	Provide detailed step-by-step for beginner.
+4.	When a new file or folder need to be created, state what type of file or folder, and where to create it. For examples:
+	4.1 New Folder: Android Resource Directory, Sample Data Directory, or Package
+	4.2 New Kotlin Class File:Class, File, Interface, Data class, Enum class, Annotation, Kotlin script, or Object
+5.	Responses: label each response with a numeral order and a timestamp. At the end of the responses, provide a list of files that are modified or created.
+	5.1	All codes need to be in a downloadable file such as x-kotlin file, .kt or xml
+	5.2	In the downloadable file: add comment to the top of each file: full path, updated timestamp, and scope. 
+	5.4 Example: 	// File: app/src/main/java/com/example/workoutlogs/ui/workout/CategoriesScreen.kt
+					// Timestamp: Updated onill  2025-05-06 18:30:00
+					// Scope: should explain what the file does. For example: Manages category list shared with ExerciseDetailScreen and other screens
+6.	When reference a file, provide full path.
+
+B. [App Technical Scope]
+1.	App name: Workout Log
+2.	Purpose: to log weightlifting and cardio exercises
+3.	Use https://developer.android.com/ as primary reference/documentation to use a latest development tools and practices. For example, for dependency injection, use Hilt.
+4.	Follow guidance for all recommendations in https://developer.android.com/design. For example, Architecture https://developer.android.com/topic/architecture and use Hilt, KSP and ViewModel (https://developer.android.com/topic/libraries/architecture/viewmodel).
+	4.1.	Remember to use the latest versions of tools: Kotlin, Kotlin DSL, Jetpack Compose, Material 3, Kotlin Symbol Processing (KSP), Android Studio Meerkat 2024.3.2 for instructions, JetBrains Runtime (JBR)
+5.	Database
+	5.1	Auto-save all actions in app.
+	5.2	Use SharedPreferences for simple data (e.g., a user’s name).
+	5.3	Use best practices and recommendation as mentioned above.
+6.	Use Room (an Android library) for structured data like a list of tasks in a to-do app.
+7.	Use Model-View-ViewModel (for example: https://www.geeksforgeeks.org/mvvm-model-view-viewmodel-architecture-pattern-in-android/, but give your recommendation if you think you have better ideas in organization and structure).
+
+C. [File Structure]
+com.workoutlogs/
+├── data/
+│   ├── model/
+│   │   ├── Exercise.kt
+│   │   ├── Workout.kt
+│   │   └── CalendarEntry.kt
+│   ├── repository/
+│   │   ├── ExerciseRepository.kt
+│   │   ├── WorkoutRepository.kt
+│   │   └── CalendarRepository.kt
+│   └── db/
+│       ├── WorkoutLogsDatabase.kt
+│       ├── dao/
+│       │   ├── ExerciseDao.kt
+│       │   └── WorkoutDao.kt
+├── ui/
+│   ├── common/
+│   │   ├── NavBar.kt
+│   │   ├── SimpleCalendarView.kt
+│   │   └── FullCalendarView.kt
+│   ├── home/
+│   │   ├── HomeScreen.kt
+│   │   └── HomeViewModel.kt
+│   ├── exercise/
+│   │   ├── ExerciseDetailScreen.kt
+│   │   └── ExerciseViewModel.kt
+│   ├── cardio/
+│   │   ├── CardioDetailScreen.kt
+│   │   └── CardioViewModel.kt
+│   ├── workout/
+│   │   ├── WorkoutScreen.kt
+│   │   └── WorkoutViewModel.kt
+│   ├── settings/
+│   │   ├── SettingsScreen.kt
+│   │   └── SettingsViewModel.kt
+│   └── navigation/
+│       ├── NavGraph.kt
+│       └── DrawerContent.kt
+├── di/
+│   └── AppModule.kt
+└── MainActivity.kt
