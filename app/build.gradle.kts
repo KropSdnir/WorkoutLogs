@@ -1,3 +1,7 @@
+// File: app/build.gradle.kts
+// Timestamp: Updated on 2025-05-09 05:34:00
+// Scope: App module build file for WorkoutLogs, defining dependencies and KSP configurations
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
