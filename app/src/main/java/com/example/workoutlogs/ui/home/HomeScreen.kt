@@ -1,10 +1,10 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 21:30:00 CEST
+// Timestamp: Updated on 2025-05-11 22:00:00 CEST
 // Scope: Composable screen for the home page of WorkoutLogs app
 // Note: Replace the existing HomeScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
-// with this file. Fixed Modifier.clickable error (no onLongClick) using pointerInput for long-press.
+// with this file. Fixed pointerInput errors (type mismatch, too many arguments) using detectTapGestures for long-press.
 // Retains centered SimpleCalendarView, long-press calendar button (resets to today),
 // and upward menu for Menu button.
 // Sourced from https://github.com/KropSdnir/WorkoutLogs.
@@ -17,9 +17,7 @@
 
 package com.example.workoutlogs.ui.home
 
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -105,13 +103,9 @@ fun HomeScreen(navController: NavController) {
                     IconButton(
                         onClick = { showFullCalendar = !showFullCalendar },
                         modifier = Modifier.pointerInput(Unit) {
-                            awaitEachGesture {
-                                val down = awaitFirstDown()
-                                val longPress = waitForUpOrCancellation(down, 500L)
-                                if (longPress == null) {
-                                    selectedDate = LocalDate.now()
-                                }
-                            }
+                            detectTapGestures(
+                                onLongPress = { selectedDate = LocalDate.now() }
+                            )
                         }
                     ) {
                         Icon(Icons.Default.CalendarToday, contentDescription = "Toggle Calendar")
