@@ -16,13 +16,12 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
 fun ExerciseDetailsScreen(
     navController: NavController,
-    exerciseId: Int
+    exerciseId: String?
 ) {
     Scaffold(
         bottomBar = {

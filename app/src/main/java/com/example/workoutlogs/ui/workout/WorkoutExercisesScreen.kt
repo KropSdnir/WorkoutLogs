@@ -1,17 +1,19 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 06:35:00 CEST
+// Timestamp: Updated on 2025-05-11 17:29:00 CEST
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 // Note: Replace the existing WorkoutExercisesScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// with this file if changes occurred. No changes made since Response 60.
+// with this file. Sourced from https://github.com/KropSdnir/WorkoutLogs.
+// Fixed syntax errors at line 144:34 (missing parenthesis) and line 174:1 (stray code).
 // Combined "Selected" and "Add to Workout" buttons in one Row with search bar.
 // BottomAppBar plus icon navigates to ExerciseNewScreen. Search bar uses fillMaxWidth(0.6f).
 // Verify this file is applied correctly by checking the Timestamp, BottomAppBar content (plus icon navigates to exercise_new), and search Row (includes both buttons).
 // If errors persist:
-// 1. Search project for 'BottomAppBar' or 'Row' to verify no custom composables.
-// 2. Uninstall app, clean project, delete .idea folder, invalidate caches, sync Gradle.
-// 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output, and stack trace from 'gradlew :app:assembleDebug --stacktrace'.
+// 1. Share the local WorkoutExercisesScreen.kt to identify differences.
+// 2. Run 'gradlew :app:kspDebugKotlin --stacktrace' and share the stack trace.
+// 3. Uninstall app, clean project, delete .idea folder, invalidate caches, sync Gradle.
+// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output.
 
 package com.example.workoutlogs.ui.workout
 
@@ -77,6 +79,7 @@ fun WorkoutExercisesScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            // Row 1: Search Bar, Selected Button, and Add to Workout Button
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,6 +104,7 @@ fun WorkoutExercisesScreen(
                     ) {
                         Text("Selected")
                     }
+                    // Line ~144: Fixed missing parenthesis in enabled or onClick
                     Button(
                         onClick = { navController.navigate("workout_exercises") },
                         enabled = selectedExercises.isNotEmpty()
@@ -109,6 +113,8 @@ fun WorkoutExercisesScreen(
                     }
                 }
             }
+
+            // Row 2: Category Dropdown
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -142,35 +148,38 @@ fun WorkoutExercisesScreen(
                                     viewModel.updateSelectedCategory(category)
                                     expanded = false
                                 }
+                            )
                         }
                     }
                 }
             }
-        }
-        if (exercises.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("No exercises yet. Add one!")
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp)
-            ) {
-                items(exercises) { exercise ->
-                    ExerciseItem(
-                        exercise = exercise,
-                        onToggleSelection = { viewModel.toggleExerciseSelection(exercise.id, !exercise.isSelected) },
-                        onDetailsClick = { navController.navigate("exercise_details/${exercise.id}") }
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+
+            // Exercise List
+            if (exercises.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No exercises yet. Add one!")
+                }
+            } else {
+                // Line ~174: Fixed stray code in LazyColumn
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    items(exercises) { exercise ->
+                        ExerciseItem(
+                            exercise = exercise,
+                            onToggleSelection = { viewModel.toggleExerciseSelection(exercise.id, !exercise.isSelected) },
+                            onDetailsClick = { navController.navigate("exercise_details/${exercise.id}") }
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
             }
         }
     }
-}
 }
 
 @Composable
