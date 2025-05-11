@@ -1,12 +1,15 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 09:24:00 GMT+03:00
+// Timestamp: Updated on 2025-05-11 10:24:00 GMT+03:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 // Note: Replace the existing WorkoutExercisesScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // with this file. The BottomAppBar uses a Row to provide RowScope for Modifier.weight(1f).
-// If the error persists, comment out the current BottomAppBar content and uncomment the fallback version below.
-// Verify no custom BottomAppBar composable is used elsewhere in the project.
+// If the error persists:
+// 1. Comment out the current BottomAppBar content and uncomment the fallback version below.
+// 2. Share lines 130–140 of your WorkoutExercisesScreen.kt.
+// 3. Verify no custom BottomAppBar composable is used (search project for 'BottomAppBar').
+// 4. Clean project, invalidate caches, check Compose/Kotlin versions, and sync Gradle (see instructions).
 
 package com.example.workoutlogs.ui.workout
 
@@ -218,7 +221,7 @@ fun ExerciseItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.SpaceSevere,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
