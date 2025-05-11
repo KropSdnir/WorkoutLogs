@@ -1,19 +1,17 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 17:29:00 CEST
+// Timestamp: Updated on 2025-05-11 20:30:00 CEST
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 // Note: Replace the existing WorkoutExercisesScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// with this file. Sourced from https://github.com/KropSdnir/WorkoutLogs.
-// Fixed syntax errors at line 144:34 (missing parenthesis) and line 174:1 (stray code).
-// Combined "Selected" and "Add to Workout" buttons in one Row with search bar.
-// BottomAppBar plus icon navigates to ExerciseNewScreen. Search bar uses fillMaxWidth(0.6f).
-// Verify this file is applied correctly by checking the Timestamp, BottomAppBar content (plus icon navigates to exercise_new), and search Row (includes both buttons).
-// If errors persist:
-// 1. Share the local WorkoutExercisesScreen.kt to identify differences.
-// 2. Run 'gradlew :app:kspDebugKotlin --stacktrace' and share the stack trace.
-// 3. Uninstall app, clean project, delete .idea folder, invalidate caches, sync Gradle.
-// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output.
+// with this file. Updated Menu button for upward menu.
+// Sourced from https://github.com/KropSdnir/WorkoutLogs.
+// Verify this file is applied correctly by checking the Timestamp and BottomAppBar content
+// (upward menu).
+// If issues:
+// 1. Share local WorkoutExercisesScreen.kt.
+// 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
+// 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
 
 package com.example.workoutlogs.ui.workout
 
@@ -36,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.workoutlogs.data.model.Exercise
@@ -50,26 +49,78 @@ fun WorkoutExercisesScreen(
     val categories by viewModel.categories.collectAsState()
     var searchQuery by remember { mutableStateOf(viewModel.searchQuery) }
     var selectedCategory by remember { mutableStateOf(viewModel.selectedCategory) }
+    var showMenu by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(onClick = { navController.navigate("drawer") }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Menu")
-                }
-                IconButton(onClick = { navController.navigate("home") }) {
-                    Icon(Icons.Default.Home, contentDescription = "Home")
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = "Exercises",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                IconButton(onClick = { navController.navigate("exercise_new") }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            offset = DpOffset(0.dp, (-150).dp) // Upward menu
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Home") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("home")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Calendar") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("home") // Navigate to home for calendar
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Workout") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("workout")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Exercises") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("workout_exercises")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Settings") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("settings")
+                                }
+                            )
+                        }
+                    }
+                    IconButton(onClick = { navController.navigate("home") }) {
+                        Icon(Icons.Default.Home, contentDescription = "Home")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = "Exercises",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    IconButton(onClick = { navController.navigate("exercise_new") }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                    }
                 }
             }
         }
@@ -79,7 +130,6 @@ fun WorkoutExercisesScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Row 1: Search Bar, Selected Button, and Add to Workout Button
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,7 +154,6 @@ fun WorkoutExercisesScreen(
                     ) {
                         Text("Selected")
                     }
-                    // Line ~144: Fixed missing parenthesis in enabled or onClick
                     Button(
                         onClick = { navController.navigate("workout_exercises") },
                         enabled = selectedExercises.isNotEmpty()
@@ -113,8 +162,6 @@ fun WorkoutExercisesScreen(
                     }
                 }
             }
-
-            // Row 2: Category Dropdown
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -153,8 +200,6 @@ fun WorkoutExercisesScreen(
                     }
                 }
             }
-
-            // Exercise List
             if (exercises.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -163,7 +208,6 @@ fun WorkoutExercisesScreen(
                     Text("No exercises yet. Add one!")
                 }
             } else {
-                // Line ~174: Fixed stray code in LazyColumn
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp)

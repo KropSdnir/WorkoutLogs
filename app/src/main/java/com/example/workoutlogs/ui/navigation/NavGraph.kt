@@ -1,11 +1,11 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/navigation/NavGraph.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 19:30:00 CEST
+// Timestamp: Updated on 2025-05-11 20:30:00 CEST
 // Scope: Navigation graph for WorkoutLogs app
 // Note: Replace the existing NavGraph.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/navigation/NavGraph.kt
-// with this file. Added cardio_details route for plus icon dropdown.
-// Verified workout_exercises route for WorkoutScreen plus icon.
+// with this file. Added settings route for menu.
+// Verified workout_exercises and cardio_details routes.
 // Sourced from https://github.com/KropSdnir/WorkoutLogs.
 // Verify this file is applied correctly by checking the Timestamp and NavHost routes.
 // If issues:
@@ -59,6 +59,14 @@ fun NavGraph(navController: NavHostController) {
                 contentAlignment = Alignment.Center
             ) {
                 Text("Cardio Detail Screen Placeholder")
+            }
+        }
+        composable("settings") {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Settings Screen Placeholder")
             }
         }
         composable("drawer") {

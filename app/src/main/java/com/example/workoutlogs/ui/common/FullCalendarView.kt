@@ -1,15 +1,13 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/common/FullCalendarView.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 19:30:00 CEST
+// Timestamp: Updated on 2025-05-11 20:30:00 CEST
 // Scope: Month grid calendar composable for WorkoutLogs app
 // Note: Replace this file at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/common/FullCalendarView.kt
-// with this file. Updated to match original instructions (month grid, one-month size, scrolling).
-// Displays a month grid with selectable dates, scrollable vertically for other months.
-// Used in HomeScreen and WorkoutScreen.
+// with this file if changes occurred. No changes since R72.
+// Supports date selection and return to SimpleCalendarView.
 // Sourced from https://github.com/KropSdnir/WorkoutLogs (ui/common/).
-// Verify this file is applied correctly by checking the Timestamp and calendar display
-// (month grid, one-month size, scrolling).
+// Verify this file is applied correctly by checking the Timestamp and calendar display.
 // If incorrect:
 // 1. Share local FullCalendarView.kt from ui/common/.
 // 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
@@ -35,8 +33,11 @@ import java.time.format.TextStyle
 import java.util.*
 
 @Composable
-fun FullCalendarView() {
-    val currentMonth = remember { mutableStateOf(LocalDate.now().withDayOfMonth(1)) }
+fun FullCalendarView(
+    selectedDate: LocalDate,
+    onDateSelected: (LocalDate) -> Unit
+) {
+    val currentMonth = remember { mutableStateOf(selectedDate.withDayOfMonth(1)) }
 
     LazyColumn(
         modifier = Modifier
@@ -47,18 +48,20 @@ fun FullCalendarView() {
         // Display 3 months (previous, current, next) for scrolling
         items(3) { index ->
             val monthDate = currentMonth.value.plusMonths((index - 1).toLong())
-            MonthGrid(monthDate)
+            MonthGrid(monthDate, selectedDate, onDateSelected)
         }
     }
 }
 
 @Composable
-fun MonthGrid(date: LocalDate) {
+fun MonthGrid(
+    date: LocalDate,
+    selectedDate: LocalDate,
+    onDateSelected: (LocalDate) -> Unit
+) {
     val firstDayOfMonth = date.withDayOfMonth(1)
     val daysInMonth = date.lengthOfMonth()
     val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7 // Sunday = 0
-    val today = LocalDate.now()
-    val selectedDate = remember { mutableStateOf(today) }
 
     Column {
         Text(
@@ -91,7 +94,7 @@ fun MonthGrid(date: LocalDate) {
                     for (dayOfWeek in 0 until 7) {
                         if (day > 0 && day <= daysInMonth) {
                             val currentDate = firstDayOfMonth.plusDays((day - 1).toLong())
-                            val isSelected = currentDate == selectedDate.value
+                            val isSelected = currentDate == selectedDate
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
@@ -100,7 +103,9 @@ fun MonthGrid(date: LocalDate) {
                                         if (isSelected) MaterialTheme.colorScheme.primary
                                         else MaterialTheme.colorScheme.surface
                                     )
-                                    .clickable { selectedDate.value = currentDate },
+                                    .clickable {
+                                        onDateSelected(currentDate)
+                                    },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(

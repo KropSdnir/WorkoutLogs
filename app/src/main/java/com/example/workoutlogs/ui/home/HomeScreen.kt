@@ -1,17 +1,16 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 19:30:00 CEST
+// Timestamp: Updated on 2025-05-11 20:30:00 CEST
 // Scope: Composable screen for the home page of WorkoutLogs app
 // Note: Replace the existing HomeScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
-// with this file. Matches WorkoutScreen UI per original instructions, with BottomAppBar.
-// SimpleCalendarView (toggleable) and FullCalendarView (month grid) restored from ui/common/.
-// Plus icon has dropdown for Weight and Cardio.
+// with this file. Updated for centered SimpleCalendarView, long-press calendar button,
+// and upward menu for Menu button.
 // Sourced from https://github.com/KropSdnir/WorkoutLogs.
 // Verify this file is applied correctly by checking the Timestamp, BottomAppBar content
-// (plus icon dropdown, calendar icon toggles SimpleCalendarView), and calendar displays.
+// (upward menu, long-press calendar, centered date).
 // If issues:
-// 1. Share local HomeScreen.kt if calendars fail.
+// 1. Share local HomeScreen.kt if calendars or menu fail.
 // 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
 // 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
 
@@ -27,14 +26,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.navigation.NavController
 import com.example.workoutlogs.ui.common.FullCalendarView
 import com.example.workoutlogs.ui.common.SimpleCalendarView
+import java.time.LocalDate
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val showCalendar = remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var showFullCalendar by remember { mutableStateOf(false) }
     var showDropdown by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -48,10 +51,56 @@ fun HomeScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { navController.navigate("drawer") }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            offset = DpOffset(0.dp, (-150).dp) // Upward menu
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Home") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("home")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Calendar") },
+                                onClick = {
+                                    showMenu = false
+                                    showFullCalendar = !showFullCalendar
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Workout") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("workout")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Exercises") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("workout_exercises")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Settings") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("settings")
+                                }
+                            )
+                        }
                     }
-                    IconButton(onClick = { showCalendar.value = !showCalendar.value }) {
+                    IconButton(
+                        onClick = { showFullCalendar = !showFullCalendar },
+                        onLongClick = { selectedDate = LocalDate.now() }
+                    ) {
                         Icon(Icons.Default.CalendarToday, contentDescription = "Toggle Calendar")
                     }
                     Text(
@@ -70,7 +119,7 @@ fun HomeScreen(navController: NavController) {
                                 text = { Text("Weight") },
                                 onClick = {
                                     showDropdown = false
-                                    navController.navigate("exercise_details/null")
+                                    navController.navigate("workout")
                                 }
                             )
                             DropdownMenuItem(
@@ -92,10 +141,20 @@ fun HomeScreen(navController: NavController) {
                 .padding(padding),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (showCalendar.value) {
-                SimpleCalendarView()
+            if (showFullCalendar) {
+                FullCalendarView(
+                    selectedDate = selectedDate,
+                    onDateSelected = { date ->
+                        selectedDate = date
+                        showFullCalendar = false
+                    }
+                )
+            } else {
+                SimpleCalendarView(
+                    selectedDate = selectedDate,
+                    onClick = { showFullCalendar = true }
+                )
             }
-            FullCalendarView()
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
