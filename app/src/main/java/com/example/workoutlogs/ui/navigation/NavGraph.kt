@@ -1,21 +1,26 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/navigation/NavGraph.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 18:15:00 CEST
+// Timestamp: Updated on 2025-05-11 19:30:00 CEST
 // Scope: Navigation graph for WorkoutLogs app
 // Note: Replace the existing NavGraph.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/navigation/NavGraph.kt
-// with this file. Fixed type mismatch in exercise_details route (String? instead of Int).
-// Added "workout" route for WorkoutScreen to support HomeScreen navigation.
-// Verify this file is applied correctly by checking the Timestamp and NavHost routes (includes workout).
-// If errors persist:
-// 1. Share the full ExerciseDetailsScreen.kt to verify its signature.
-// 2. Run 'gradlew :app:compileDebugKotlin --stacktrace' and share the stack trace.
-// 3. Uninstall app, clean project, delete .idea folder, invalidate caches, sync Gradle.
-// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output.
+// with this file. Added cardio_details route for plus icon dropdown.
+// Verified workout_exercises route for WorkoutScreen plus icon.
+// Sourced from https://github.com/KropSdnir/WorkoutLogs.
+// Verify this file is applied correctly by checking the Timestamp and NavHost routes.
+// If issues:
+// 1. Share local NavGraph.kt and ExerciseNewScreen.kt.
+// 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
+// 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
 
 package com.example.workoutlogs.ui.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -48,8 +53,16 @@ fun NavGraph(navController: NavHostController) {
             val exerciseId = backStackEntry.arguments?.getString("exerciseId")
             ExerciseDetailsScreen(navController, exerciseId)
         }
+        composable("cardio_details") {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Cardio Detail Screen Placeholder")
+            }
+        }
         composable("drawer") {
-            CategoriesScreen(navController) // Updated to use CategoriesScreen
+            CategoriesScreen(navController)
         }
     }
 }

@@ -1,34 +1,43 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 06:35:00 CEST
+// Timestamp: Updated on 2025-05-11 19:30:00 CEST
 // Scope: Composable screen for managing workouts in WorkoutLogs app
 // Note: Replace the existing WorkoutScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// with this file. Sourced from https://github.com/KropSdnir/WorkoutLogs.
-// Fixed imports to resolve 'Menu' and package import errors.
-// BottomAppBar includes Menu, Home, "Workouts" title, and plus icon (navigates to exercise_new).
-// Verify this file is applied correctly by checking the Timestamp and BottomAppBar content.
-// If errors persist:
-// 1. Search project for 'BottomAppBar' or 'Row' to verify no custom composables.
-// 2. Uninstall app, clean project, delete .idea folder, invalidate caches, sync Gradle.
-// 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output, MainActivity.kt, and stack trace from 'gradlew :app:assembleDebug --stacktrace'.
+// with this file. Matches HomeScreen UI per original instructions, with BottomAppBar.
+// Plus icon navigates to workout_exercises with dropdown for Weight and Cardio.
+// SimpleCalendarView (toggleable) and FullCalendarView (month grid) restored from ui/common/.
+// Sourced from https://github.com/KropSdnir/WorkoutLogs.
+// Verify this file is applied correctly by checking the Timestamp, BottomAppBar content
+// (plus icon to workout_exercises, dropdown, calendar icon toggles SimpleCalendarView),
+// and calendar displays.
+// If crash persists:
+// 1. Share local WorkoutScreen.kt and ExerciseNewScreen.kt.
+// 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
+// 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff, Logcat output.
 
 package com.example.workoutlogs.ui.workout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.workoutlogs.ui.common.FullCalendarView
+import com.example.workoutlogs.ui.common.SimpleCalendarView
 
 @Composable
 fun WorkoutScreen(navController: NavController) {
+    val showCalendar = remember { mutableStateOf(false) }
+    var showDropdown by remember { mutableStateOf(false) }
+
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -47,24 +56,64 @@ fun WorkoutScreen(navController: NavController) {
                     IconButton(onClick = { navController.navigate("home") }) {
                         Icon(Icons.Default.Home, contentDescription = "Home")
                     }
+                    IconButton(onClick = { showCalendar.value = !showCalendar.value }) {
+                        Icon(Icons.Default.CalendarToday, contentDescription = "Toggle Calendar")
+                    }
                     Text(
                         text = "Workouts",
                         style = MaterialTheme.typography.titleMedium
                     )
-                    IconButton(onClick = { navController.navigate("exercise_new") }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                    Box {
+                        IconButton(onClick = { showDropdown = true }) {
+                            Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                        }
+                        DropdownMenu(
+                            expanded = showDropdown,
+                            onDismissRequest = { showDropdown = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Weight") },
+                                onClick = {
+                                    showDropdown = false
+                                    navController.navigate("exercise_details/null")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Cardio") },
+                                onClick = {
+                                    showDropdown = false
+                                    navController.navigate("cardio_details")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Exercises") },
+                                onClick = {
+                                    showDropdown = false
+                                    navController.navigate("workout_exercises")
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
     ) { padding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentAlignment = Alignment.Center
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Workout Screen Placeholder")
+            if (showCalendar.value) {
+                SimpleCalendarView()
+            }
+            FullCalendarView()
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Screen Placeholder")
+            }
         }
     }
 }
