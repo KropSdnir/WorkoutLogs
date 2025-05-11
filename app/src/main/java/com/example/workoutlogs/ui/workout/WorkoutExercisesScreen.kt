@@ -1,7 +1,10 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 07:24:00 GMT+03:00
+// Timestamp: Updated on 2025-05-11 08:24:00 GMT+03:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
+// Note: Ensure this file replaces the existing WorkoutExercisesScreen.kt at
+// D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
+// The BottomAppBar uses a Row to provide RowScope for Modifier.weight(1f)
 
 package com.example.workoutlogs.ui.workout
 
@@ -56,9 +59,9 @@ fun WorkoutExercisesScreen(
                     IconButton(onClick = { navController.navigate("home") }) {
                         Icon(Icons.Default.Home, contentDescription = "Home")
                     }
-                    Spacer(modifier = Modifier.weight(1f)) // Spacer takes available space
+                    // Single Spacer to balance space between icons and text
+                    Spacer(modifier = Modifier.weight(1f))
                     Text("Exercises", style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.weight(1f)) // Spacer takes available space
                     IconButton(onClick = { navController.navigate("exercise_new") }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Exercise")
                     }
