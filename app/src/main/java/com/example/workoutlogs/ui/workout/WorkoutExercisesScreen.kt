@@ -1,13 +1,14 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 14:24:00 GMT+03:00
+// Timestamp: Updated on 2025-05-11 15:24:00 GMT+03:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 // Note: Replace the existing WorkoutExercisesScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // with this file. The BottomAppBar avoids weight modifier per Gemini's recommendation.
+// Verify this file is applied correctly by checking the Timestamp and BottomAppBar content (no Modifier.weight).
 // If errors persist:
 // 1. Use the fallback BottomAppBar content (already without weight).
-// 2. Search project for 'BottomAppBar' to verify no custom composable.
+// 2. Search project for 'BottomAppBar' to verify no custom composable or weight usage.
 // 3. Clean project, invalidate caches, sync Gradle (see instructions).
 // 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output, and stack trace from 'gradlew :app:kspDebugKotlin --stacktrace'.
 
