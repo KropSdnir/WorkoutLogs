@@ -1,6 +1,6 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 05:24:00 GMT+03:00
+// Timestamp: Updated on 2025-05-11 07:24:00 GMT+03:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
@@ -42,8 +42,11 @@ fun WorkoutExercisesScreen(
     Scaffold(
         bottomBar = {
             BottomAppBar {
+                // Row provides RowScope for weight modifier
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -53,9 +56,9 @@ fun WorkoutExercisesScreen(
                     IconButton(onClick = { navController.navigate("home") }) {
                         Icon(Icons.Default.Home, contentDescription = "Home")
                     }
-                    Spacer(Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f)) // Spacer takes available space
                     Text("Exercises", style = MaterialTheme.typography.titleMedium)
-                    Spacer(Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f)) // Spacer takes available space
                     IconButton(onClick = { navController.navigate("exercise_new") }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Exercise")
                     }
@@ -84,7 +87,7 @@ fun WorkoutExercisesScreen(
                     label = { Text("Search Exercises") },
                     modifier = Modifier.weight(1f)
                 )
-                Spacer(Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = { viewModel.toggleShowSelectedOnly() },
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -131,7 +134,7 @@ fun WorkoutExercisesScreen(
                         }
                     }
                 }
-                Spacer(Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
                         // Selected exercises are already tracked via isSelected
