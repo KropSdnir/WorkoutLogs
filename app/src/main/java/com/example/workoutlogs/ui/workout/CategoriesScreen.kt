@@ -1,12 +1,13 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/categories/CategoriesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 04:24:00
+// Timestamp: Updated on 2025-05-11 05:24:00 GMT+03:00
 // Scope: Composable screen for managing categories in WorkoutLogs app
 
 package com.example.workoutlogs.ui.categories
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add

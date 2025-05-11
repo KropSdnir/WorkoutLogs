@@ -1,6 +1,6 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 04:24:00
+// Timestamp: Updated on 2025-05-11 05:24:00 GMT+03:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
@@ -42,7 +42,11 @@ fun WorkoutExercisesScreen(
     Scaffold(
         bottomBar = {
             BottomAppBar {
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(onClick = { navController.navigate("drawer") }) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
