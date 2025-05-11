@@ -1,16 +1,16 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 16:24:00 GMT+03:00
+// Timestamp: Updated on 2025-05-12 12:24:00 GMT+03:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 // Note: Replace the existing WorkoutExercisesScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// with this file. The BottomAppBar avoids weight modifier, and the search bar's Row replaces weight with fillMaxWidth to avoid RowScope issues.
-// Verify this file is applied correctly by checking the Timestamp, BottomAppBar content (no Modifier.weight), and search bar (Modifier.fillMaxWidth).
+// with this file. Combined "Selected" and "Add to Workout" buttons in one Row with search bar.
+// BottomAppBar plus icon navigates to ExerciseNewScreen. Search bar uses fillMaxWidth(0.6f).
+// Verify this file is applied correctly by checking the Timestamp, BottomAppBar content (plus icon navigates to exercise_new), and search Row (includes both buttons).
 // If errors persist:
-// 1. Use the fallback BottomAppBar content (already without weight).
-// 2. Search project for 'BottomAppBar' and 'Row' to verify no custom composables or weight usage.
-// 3. Clean project, delete .idea folder, invalidate caches, sync Gradle (see instructions).
-// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output, and stack trace from 'gradlew :app:kspDebugKotlin --stacktrace'.
+// 1. Search project for 'BottomAppBar' or 'Row' to verify no custom composables.
+// 2. Uninstall app, clean project, delete .idea folder, invalidate caches, sync Gradle.
+// 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output, and stack trace from 'gradlew :app:assembleDebug --stacktrace'.
 
 package com.example.workoutlogs.ui.workout
 
@@ -53,7 +53,7 @@ fun WorkoutExercisesScreen(
             BottomAppBar(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Use BottomAppBar's built-in layout, avoid weight modifier
+                // Use BottomAppBar's built-in layout
                 IconButton(onClick = { navController.navigate("drawer") }) {
                     Icon(Icons.Default.Menu, contentDescription = "Menu")
                 }
@@ -70,28 +70,6 @@ fun WorkoutExercisesScreen(
                     Icon(Icons.Default.Add, contentDescription = "Add Exercise")
                 }
             }
-
-            // Fallback BottomAppBar (uncomment if needed):
-            /*
-            BottomAppBar(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                IconButton(onClick = { navController.navigate("drawer") }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Menu")
-                }
-                IconButton(onClick = { navController.navigate("home") }) {
-                    Icon(Icons.Default.Home, contentDescription = "Home")
-                }
-                Text(
-                    text = "Exercises",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                IconButton(onClick = { navController.navigate("exercise_new") }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Exercise")
-                }
-            }
-            */
         }
     ) { padding ->
         Column(
@@ -99,12 +77,13 @@ fun WorkoutExercisesScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Row 1: Search Bar and Selected Button
+            // Row 1: Search Bar, Selected Button, and Add to Workout Button
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
                     value = searchQuery,
@@ -113,18 +92,26 @@ fun WorkoutExercisesScreen(
                         viewModel.updateSearchQuery(it)
                     },
                     label = { Text("Search Exercises") },
-                    modifier = Modifier.fillMaxWidth(0.7f) // Replaced weight(1f)
+                    modifier = Modifier.fillMaxWidth(0.6f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = { viewModel.toggleShowSelectedOnly() },
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                ) {
-                    Text("Selected")
+                Row {
+                    Button(
+                        onClick = { viewModel.toggleShowSelectedOnly() },
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Text("Selected")
+                    }
+                    Button(
+                        onClick = { navController.navigate("workout_exercises") },
+                        enabled = selectedExercises.isNotEmpty()
+                    ) {
+                        Text("Add to Workout")
+                    }
                 }
             }
 
-            // Row 2: Category Dropdown and Add to Workout
+            // Row 2: Category Dropdown
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -134,7 +121,7 @@ fun WorkoutExercisesScreen(
                 Box {
                     OutlinedButton(
                         onClick = { expanded = true },
-                        modifier = Modifier.fillMaxWidth(0.7f) // Replaced weight(1f)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(if (selectedCategory.isBlank()) "All Categories" else selectedCategory)
                     }
@@ -161,16 +148,6 @@ fun WorkoutExercisesScreen(
                             )
                         }
                     }
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = {
-                        // Selected exercises are already tracked via isSelected
-                        navController.navigate("workout_exercises")
-                    },
-                    enabled = selectedExercises.isNotEmpty()
-                ) {
-                    Text("Add to Workout")
                 }
             }
 
