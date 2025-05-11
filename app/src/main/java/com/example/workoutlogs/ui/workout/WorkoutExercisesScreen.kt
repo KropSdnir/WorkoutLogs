@@ -1,6 +1,6 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-10 00:23:00
+// Timestamp: Updated on 2025-05-11 04:24:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
@@ -42,17 +42,19 @@ fun WorkoutExercisesScreen(
     Scaffold(
         bottomBar = {
             BottomAppBar {
-                IconButton(onClick = { navController.navigate("drawer") }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Menu")
-                }
-                IconButton(onClick = { navController.navigate("home") }) {
-                    Icon(Icons.Default.Home, contentDescription = "Home")
-                }
-                Spacer(Modifier.weight(1f))
-                Text("Exercises", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = { navController.navigate("exercise_new") }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                Row {
+                    IconButton(onClick = { navController.navigate("drawer") }) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    }
+                    IconButton(onClick = { navController.navigate("home") }) {
+                        Icon(Icons.Default.Home, contentDescription = "Home")
+                    }
+                    Spacer(Modifier.weight(1f))
+                    Text("Exercises", style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.weight(1f))
+                    IconButton(onClick = { navController.navigate("exercise_new") }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                    }
                 }
             }
         }

@@ -1,12 +1,13 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/ExerciseDetailsScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-10 00:23:00
+// Timestamp: Updated on 2025-05-11 04:24:00
 // Scope: Composable screen for exercise details in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
@@ -25,17 +26,19 @@ fun ExerciseDetailsScreen(
     Scaffold(
         bottomBar = {
             BottomAppBar {
-                IconButton(onClick = { navController.navigate("drawer") }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Menu")
-                }
-                IconButton(onClick = { navController.navigate("home") }) {
-                    Icon(Icons.Default.Home, contentDescription = "Home")
-                }
-                Spacer(Modifier.weight(1f))
-                Text("Exercise Details", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = { /* No-op */ }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add")
+                Row {
+                    IconButton(onClick = { navController.navigate("drawer") }) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    }
+                    IconButton(onClick = { navController.navigate("home") }) {
+                        Icon(Icons.Default.Home, contentDescription = "Home")
+                    }
+                    Spacer(Modifier.weight(1f))
+                    Text("Exercise Details", style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.weight(1f))
+                    IconButton(onClick = { /* No-op */ }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add")
+                    }
                 }
             }
         }
