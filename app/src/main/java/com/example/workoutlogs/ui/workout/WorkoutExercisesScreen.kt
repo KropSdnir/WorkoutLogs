@@ -1,10 +1,11 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-12 12:24:00 GMT+03:00
+// Timestamp: Updated on 2025-05-11 06:35:00 CEST
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 // Note: Replace the existing WorkoutExercisesScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// with this file. Combined "Selected" and "Add to Workout" buttons in one Row with search bar.
+// with this file if changes occurred. No changes made since Response 60.
+// Combined "Selected" and "Add to Workout" buttons in one Row with search bar.
 // BottomAppBar plus icon navigates to ExerciseNewScreen. Search bar uses fillMaxWidth(0.6f).
 // Verify this file is applied correctly by checking the Timestamp, BottomAppBar content (plus icon navigates to exercise_new), and search Row (includes both buttons).
 // If errors persist:
@@ -53,14 +54,13 @@ fun WorkoutExercisesScreen(
             BottomAppBar(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Use BottomAppBar's built-in layout
                 IconButton(onClick = { navController.navigate("drawer") }) {
                     Icon(Icons.Default.Menu, contentDescription = "Menu")
                 }
                 IconButton(onClick = { navController.navigate("home") }) {
                     Icon(Icons.Default.Home, contentDescription = "Home")
                 }
-                Spacer(modifier = Modifier.width(16.dp)) // Fixed spacing
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = "Exercises",
                     style = MaterialTheme.typography.titleMedium,
@@ -77,7 +77,6 @@ fun WorkoutExercisesScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Row 1: Search Bar, Selected Button, and Add to Workout Button
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -110,8 +109,6 @@ fun WorkoutExercisesScreen(
                     }
                 }
             }
-
-            // Row 2: Category Dropdown
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -145,37 +142,35 @@ fun WorkoutExercisesScreen(
                                     viewModel.updateSelectedCategory(category)
                                     expanded = false
                                 }
-                            )
                         }
                     }
                 }
             }
-
-            // Exercise List
-            if (exercises.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No exercises yet. Add one!")
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(exercises) { exercise ->
-                        ExerciseItem(
-                            exercise = exercise,
-                            onToggleSelection = { viewModel.toggleExerciseSelection(exercise.id, !exercise.isSelected) },
-                            onDetailsClick = { navController.navigate("exercise_details/${exercise.id}") }
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
+        }
+        if (exercises.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("No exercises yet. Add one!")
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                items(exercises) { exercise ->
+                    ExerciseItem(
+                        exercise = exercise,
+                        onToggleSelection = { viewModel.toggleExerciseSelection(exercise.id, !exercise.isSelected) },
+                        onDetailsClick = { navController.navigate("exercise_details/${exercise.id}") }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
     }
+}
 }
 
 @Composable

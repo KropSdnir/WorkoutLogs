@@ -1,12 +1,13 @@
-// File: app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
+// File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-12 15:24:00 GMT+03:00
-// Scope: Composable screen for the home page of WorkoutLogs app
-// Note: Replace the existing HomeScreen.kt at
-// D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
-// with this file. Plus icon navigates to WorkoutScreen ("workout" route).
-// BottomAppBar has Menu, Home, and plus icon in one Row with Arrangement.SpaceBetween.
-// Verify this file is applied correctly by checking the Timestamp and BottomAppBar content (plus icon navigates to "workout").
+// Timestamp: Updated on 2025-05-11 06:35:00 CEST
+// Scope: Composable screen for managing workouts in WorkoutLogs app
+// Note: Replace the existing WorkoutScreen.kt at
+// D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
+// with this file. Sourced from https://github.com/KropSdnir/WorkoutLogs.
+// Fixed imports to resolve 'Menu' and package import errors.
+// BottomAppBar includes Menu, Home, "Workouts" title, and plus icon (navigates to exercise_new).
+// Verify this file is applied correctly by checking the Timestamp and BottomAppBar content.
 // If errors persist:
 // 1. Search project for 'BottomAppBar' or 'Row' to verify no custom composables.
 // 2. Uninstall app, clean project, delete .idea folder, invalidate caches, sync Gradle.
@@ -17,8 +18,8 @@ package com.example.workoutlogs.ui.workout
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons
-
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun WorkoutScreen(navController: NavController) {
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -43,12 +44,15 @@ fun HomeScreen(navController: NavController) {
                     IconButton(onClick = { navController.navigate("drawer") }) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
+                    IconButton(onClick = { navController.navigate("home") }) {
+                        Icon(Icons.Default.Home, contentDescription = "Home")
+                    }
                     Text(
-                        text = "Home",
+                        text = "Workouts",
                         style = MaterialTheme.typography.titleMedium
                     )
-                    IconButton(onClick = { navController.navigate("workout") }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Workout")
+                    IconButton(onClick = { navController.navigate("exercise_new") }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Exercise")
                     }
                 }
             }
@@ -60,7 +64,7 @@ fun HomeScreen(navController: NavController) {
                 .padding(padding),
             contentAlignment = Alignment.Center
         ) {
-            Text("Home Screen Placeholder")
+            Text("Workout Screen Placeholder")
         }
     }
 }
