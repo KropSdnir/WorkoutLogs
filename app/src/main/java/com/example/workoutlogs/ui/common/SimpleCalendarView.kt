@@ -17,7 +17,6 @@
 package com.example.workoutlogs.ui.common
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,7 +32,8 @@ import java.util.*
 @Composable
 fun SimpleCalendarView(
     selectedDate: LocalDate,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier
 ) {
     val isToday = selectedDate == LocalDate.now()
     val displayText = if (isToday) {
@@ -47,8 +47,7 @@ fun SimpleCalendarView(
         text = displayText,
         style = MaterialTheme.typography.titleMedium,
         textAlign = TextAlign.Center,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .padding(16.dp)
             .clickable { onClick() }
     )

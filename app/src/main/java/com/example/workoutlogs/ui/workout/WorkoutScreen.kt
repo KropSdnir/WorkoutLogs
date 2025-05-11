@@ -1,21 +1,19 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 23:59:00 CEST
+// Timestamp: Updated on 2025-05-12 02:00:00 CEST
 // Scope: Composable screen for managing workouts in WorkoutLogs app
 // Note: Replace the existing WorkoutScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// with this file. Fixed plus button navigation (added try-catch, logging),
-// moved SimpleCalendarView/FullCalendarView to bottom above BottomAppBar.
-// Retains centered SimpleCalendarView, long-press calendar, bottom sheet menu,
-// and plus to workout_exercises.
-// Sourced from https://github.com/KropSdnir/WorkoutLogs.
-// Verify this file is applied correctly by checking the Timestamp, BottomAppBar content
-// (bottom sheet menu, long-press calendar, plus to workout_exercises, centered date at bottom).
+// with this file. Updated ModalBottomSheet for FullCalendarView to appear above BottomAppBar,
+// retains SimpleCalendarView at bottom, long-press calendar, bottom sheet menu, plus navigation.
+// Sourced from R83 provided code.
+// Verify this file is applied correctly by checking the Timestamp, BottomAppBar visibility,
+// FullCalendarView overlay above BottomAppBar, and other functionality.
 // If issues:
-// 1. Share local WorkoutScreen.kt if calendar position, long-click, or navigation fails.
+// 1. Share local WorkoutScreen.kt if BottomAppBar is covered, navigation, or calendar position fails.
 // 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
-// 3. Share Logcat for navigation issues (search for "WorkoutScreen: Navigating to workout_exercises" or "WorkoutScreen: Navigation error").
-// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff, WorkoutExercisesScreen.kt.
+// 3. Share Logcat for navigation issues (search for "WorkoutScreen: Navigating", "Navigation error").
+// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, WorkoutExercisesScreen.kt.
 
 package com.example.workoutlogs.ui.workout
 
@@ -44,6 +42,7 @@ fun WorkoutScreen(navController: NavController) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var showFullCalendar by remember { mutableStateOf(false) }
     var showMenuSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
     Scaffold(
         bottomBar = {
@@ -63,12 +62,12 @@ fun WorkoutScreen(navController: NavController) {
                     IconButton(onClick = { navController.navigate("home") }) {
                         Icon(Icons.Default.Home, contentDescription = "Home")
                     }
-                    IconButton(onClick = { showFullCalendar = !showFullCalendar }) {
+                    IconButton(onClick = { showFullCalendar = true }) {
                         Icon(
                             imageVector = Icons.Default.CalendarToday,
                             contentDescription = "Toggle Calendar",
                             modifier = Modifier.combinedClickable(
-                                onClick = { showFullCalendar = !showFullCalendar },
+                                onClick = { showFullCalendar = true },
                                 onLongClick = { selectedDate = LocalDate.now() }
                             )
                         )
@@ -81,7 +80,9 @@ fun WorkoutScreen(navController: NavController) {
                         onClick = {
                             try {
                                 Log.d("WorkoutScreen", "Navigating to workout_exercises")
+                                Log.d("WorkoutScreen", "NavController state: current=${navController.currentDestination?.route}")
                                 navController.navigate("workout_exercises")
+                                Log.d("WorkoutScreen", "Navigation triggered successfully")
                             } catch (e: Exception) {
                                 Log.e("WorkoutScreen", "Navigation error: ${e.message}", e)
                             }
@@ -92,11 +93,15 @@ fun WorkoutScreen(navController: NavController) {
                 }
             }
         }
-    ) { padding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    start = innerPadding.calculateStartPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
+                    end = innerPadding.calculateEndPadding(androidx.compose.ui.unit.LayoutDirection.Ltr)
+                ),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
@@ -107,27 +112,21 @@ fun WorkoutScreen(navController: NavController) {
             ) {
                 Text("Screen Placeholder")
             }
-            if (showFullCalendar) {
-                FullCalendarView(
-                    selectedDate = selectedDate,
-                    onDateSelected = { date ->
-                        selectedDate = date
-                        showFullCalendar = false
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            } else {
-                SimpleCalendarView(
-                    selectedDate = selectedDate,
-                    onClick = { showFullCalendar = true },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+            SimpleCalendarView(
+                selectedDate = selectedDate,
+                onClick = { showFullCalendar = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = innerPadding.calculateBottomPadding())
+            )
         }
         if (showMenuSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showMenuSheet = false },
-                modifier = Modifier.fillMaxWidth()
+                sheetState = sheetState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-innerPadding.calculateBottomPadding()))
             ) {
                 Column(
                     modifier = Modifier
@@ -147,7 +146,7 @@ fun WorkoutScreen(navController: NavController) {
                     TextButton(
                         onClick = {
                             showMenuSheet = false
-                            showFullCalendar = !showFullCalendar
+                            showFullCalendar = true
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -181,6 +180,26 @@ fun WorkoutScreen(navController: NavController) {
                         Text("Settings")
                     }
                 }
+            }
+        }
+        if (showFullCalendar) {
+            ModalBottomSheet(
+                onDismissRequest = { showFullCalendar = false },
+                sheetState = sheetState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-innerPadding.calculateBottomPadding()))
+            ) {
+                FullCalendarView(
+                    selectedDate = selectedDate,
+                    onDateSelected = { date ->
+                        selectedDate = date
+                        showFullCalendar = false
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                )
             }
         }
     }

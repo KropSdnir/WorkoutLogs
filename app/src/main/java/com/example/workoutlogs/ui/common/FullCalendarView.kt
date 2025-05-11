@@ -1,28 +1,29 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/common/FullCalendarView.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 23:59:00 CEST
+// Timestamp: Updated on 2025-05-12 01:30:00 CEST
 // Scope: Composable for full calendar view in WorkoutLogs app
 // Note: Replace the existing FullCalendarView.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/common/FullCalendarView.kt
-// with this file. Updated to show single month, ~8 rows (month label, day labels, ~6 date rows),
-// positioned at bottom via HomeScreen.kt/WorkoutScreen.kt.
+// with this file. Updated to show all months in a year, scrollable in cards,
+// each with 7 rows (month label, day labels, 5 date rows), as ModalBottomSheet overlay.
+// Fixed R81 bug where all months showed as "June 2026".
 // Retains date selection, integrates with SimpleCalendarView.
-// Sourced from https://github.com/KropSdnir/WorkoutLogs.
+// Sourced from R82 provided code.
 // Verify this file is applied correctly by checking the Timestamp, FullCalendarView content
-// (single month, month label, day labels, ~8 rows, bottom position).
+// (scrollable months, correct month labels, 7 rows, overlay behavior).
 // If issues:
-// 1. Share local FullCalendarView.kt if calendar display or selection fails.
+// 1. Share local FullCalendarView.kt if month display, scrolling, or selection fails.
 // 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
 // 3. Share Logcat for calendar issues.
-// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
+// 4. Share gradle/libs.versions.toml, app/build.gradle.kts.
 
 package com.example.workoutlogs.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,53 +40,90 @@ fun FullCalendarView(
     modifier: Modifier = Modifier
 ) {
     val year = selectedDate.year
-    val month = selectedDate.month
+    val startDate = LocalDate.of(year, 1, 1) // Start at January
+    val endDate = LocalDate.of(year, 12, 31) // End at December
+    val dayLabels = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        items(12) { monthIndex ->
+            val currentDate = startDate.plusMonths(monthIndex.toLong())
+            MonthCard(
+                date = currentDate,
+                selectedDate = selectedDate,
+                dayLabels = dayLabels,
+                onDateSelected = onDateSelected
+            )
+        }
+    }
+}
+
+@Composable
+private fun MonthCard(
+    date: LocalDate,
+    selectedDate: LocalDate,
+    dayLabels: List<String>,
+    onDateSelected: (LocalDate) -> Unit
+) {
+    val year = date.year
+    val month = date.month
     val firstDayOfMonth = LocalDate.of(year, month, 1)
     val lastDayOfMonth = firstDayOfMonth.plusMonths(1).minusDays(1)
     val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7 // Sunday = 0, Monday = 1, etc.
     val daysInMonth = lastDayOfMonth.dayOfMonth
     val monthLabel = month.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " $year"
-    val dayLabels = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 
-    Column(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        // Month label
-        Text(
-            text = monthLabel,
-            style = MaterialTheme.typography.headlineSmall,
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            textAlign = TextAlign.Center
-        )
-        // Day labels
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(16.dp)
         ) {
-            dayLabels.forEach { day ->
-                Text(
-                    text = day,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(4.dp),
-                    textAlign = TextAlign.Center
-                )
+            // Month label
+            Text(
+                text = monthLabel,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                textAlign = TextAlign.Center
+            )
+            // Day labels
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                dayLabels.forEach { day ->
+                    Text(
+                        text = day,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(4.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
+            // Date grid (5 rows)
+            Grid(
+                firstDayOfWeek = firstDayOfWeek,
+                daysInMonth = daysInMonth,
+                selectedDate = selectedDate,
+                year = year,
+                month = month,
+                onDateSelected = onDateSelected
+            )
         }
-        // Date grid (~6 rows)
-        Grid(
-            firstDayOfWeek = firstDayOfWeek,
-            daysInMonth = daysInMonth,
-            selectedDate = selectedDate,
-            year = year,
-            month = month,
-            onDateSelected = onDateSelected
-        )
     }
 }
 
@@ -98,9 +136,8 @@ private fun Grid(
     month: java.time.Month,
     onDateSelected: (LocalDate) -> Unit
 ) {
-    val totalCells = 42 // 6 rows * 7 columns
     var day = 1
-    repeat(6) { row ->
+    repeat(5) { row -> // 5 rows for dates
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly

@@ -1,21 +1,19 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 23:59:00 CEST
+// Timestamp: Updated on 2025-05-12 02:00:00 CEST
 // Scope: Composable screen for the home page of WorkoutLogs app
 // Note: Replace the existing HomeScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
-// with this file. Moved SimpleCalendarView/FullCalendarView to bottom above BottomAppBar,
-// retained long-click calendar, ModalBottomSheet menu, and plus dropdown.
-// Retains centered SimpleCalendarView, long-press calendar (resets to today),
-// bottom sheet menu.
-// Sourced from https://github.com/KropSdnir/WorkoutLogs.
-// Verify this file is applied correctly by checking the Timestamp, BottomAppBar content
-// (bottom sheet menu, long-press calendar, centered date at bottom).
+// with this file. Updated ModalBottomSheet for FullCalendarView to appear above BottomAppBar,
+// retains SimpleCalendarView at bottom, long-click calendar, ModalBottomSheet menu, plus dropdown.
+// Sourced from R83 provided code.
+// Verify this file is applied correctly by checking the Timestamp, BottomAppBar visibility,
+// FullCalendarView overlay above BottomAppBar, and other functionality.
 // If issues:
-// 1. Share local HomeScreen.kt if calendar position, long-click, or navigation fails.
+// 1. Share local HomeScreen.kt if BottomAppBar is covered, calendar position, or navigation fails.
 // 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
-// 3. Share Logcat for long-click or navigation issues.
-// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
+// 3. Share Logcat for calendar or navigation issues.
+// 4. Share gradle/libs.versions.toml, app/build.gradle.kts.
 
 package com.example.workoutlogs.ui.home
 
@@ -44,6 +42,7 @@ fun HomeScreen(navController: NavController) {
     var showFullCalendar by remember { mutableStateOf(false) }
     var showDropdown by remember { mutableStateOf(false) }
     var showMenuSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
     Scaffold(
         bottomBar = {
@@ -60,12 +59,12 @@ fun HomeScreen(navController: NavController) {
                     IconButton(onClick = { showMenuSheet = true }) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
-                    IconButton(onClick = { showFullCalendar = !showFullCalendar }) {
+                    IconButton(onClick = { showFullCalendar = true }) {
                         Icon(
                             imageVector = Icons.Default.CalendarToday,
                             contentDescription = "Toggle Calendar",
                             modifier = Modifier.combinedClickable(
-                                onClick = { showFullCalendar = !showFullCalendar },
+                                onClick = { showFullCalendar = true },
                                 onLongClick = { selectedDate = LocalDate.now() }
                             )
                         )
@@ -102,11 +101,15 @@ fun HomeScreen(navController: NavController) {
                 }
             }
         }
-    ) { padding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    start = innerPadding.calculateStartPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
+                    end = innerPadding.calculateEndPadding(androidx.compose.ui.unit.LayoutDirection.Ltr)
+                ),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
@@ -117,27 +120,21 @@ fun HomeScreen(navController: NavController) {
             ) {
                 Text("Screen Placeholder")
             }
-            if (showFullCalendar) {
-                FullCalendarView(
-                    selectedDate = selectedDate,
-                    onDateSelected = { date ->
-                        selectedDate = date
-                        showFullCalendar = false
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            } else {
-                SimpleCalendarView(
-                    selectedDate = selectedDate,
-                    onClick = { showFullCalendar = true },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+            SimpleCalendarView(
+                selectedDate = selectedDate,
+                onClick = { showFullCalendar = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = innerPadding.calculateBottomPadding())
+            )
         }
         if (showMenuSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showMenuSheet = false },
-                modifier = Modifier.fillMaxWidth()
+                sheetState = sheetState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-innerPadding.calculateBottomPadding()))
             ) {
                 Column(
                     modifier = Modifier
@@ -157,7 +154,7 @@ fun HomeScreen(navController: NavController) {
                     TextButton(
                         onClick = {
                             showMenuSheet = false
-                            showFullCalendar = !showFullCalendar
+                            showFullCalendar = true
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -191,6 +188,26 @@ fun HomeScreen(navController: NavController) {
                         Text("Settings")
                     }
                 }
+            }
+        }
+        if (showFullCalendar) {
+            ModalBottomSheet(
+                onDismissRequest = { showFullCalendar = false },
+                sheetState = sheetState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-innerPadding.calculateBottomPadding()))
+            ) {
+                FullCalendarView(
+                    selectedDate = selectedDate,
+                    onDateSelected = { date ->
+                        selectedDate = date
+                        showFullCalendar = false
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                )
             }
         }
     }
