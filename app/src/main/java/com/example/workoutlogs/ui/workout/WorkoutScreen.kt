@@ -1,11 +1,12 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 20:30:00 CEST
+// Timestamp: Updated on 2025-05-11 21:00:00 CEST
 // Scope: Composable screen for managing workouts in WorkoutLogs app
 // Note: Replace the existing WorkoutScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// with this file. Updated for centered SimpleCalendarView, long-press calendar button,
-// upward menu for Menu button, and plus icon direct navigation to workout_exercises.
+// with this file. Fixed IconButton errors (no onLongClick, composable context).
+// Retains centered SimpleCalendarView, long-press calendar button, upward menu,
+// and plus icon direct navigation to workout_exercises.
 // Sourced from https://github.com/KropSdnir/WorkoutLogs.
 // Verify this file is applied correctly by checking the Timestamp, BottomAppBar content
 // (upward menu, long-press calendar, plus to workout_exercises, centered date).
@@ -16,6 +17,8 @@
 
 package com.example.workoutlogs.ui.workout
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -38,6 +41,7 @@ fun WorkoutScreen(navController: NavController) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var showFullCalendar by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
 
     Scaffold(
         bottomBar = {
@@ -102,7 +106,11 @@ fun WorkoutScreen(navController: NavController) {
                     }
                     IconButton(
                         onClick = { showFullCalendar = !showFullCalendar },
-                        onLongClick = { selectedDate = LocalDate.now() }
+                        modifier = Modifier.clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onLongClick = { selectedDate = LocalDate.now() }
+                        )
                     ) {
                         Icon(Icons.Default.CalendarToday, contentDescription = "Toggle Calendar")
                     }
