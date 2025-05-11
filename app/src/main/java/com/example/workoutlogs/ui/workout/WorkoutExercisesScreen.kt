@@ -1,10 +1,12 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 08:24:00 GMT+03:00
+// Timestamp: Updated on 2025-05-11 09:24:00 GMT+03:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
-// Note: Ensure this file replaces the existing WorkoutExercisesScreen.kt at
+// Note: Replace the existing WorkoutExercisesScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// The BottomAppBar uses a Row to provide RowScope for Modifier.weight(1f)
+// with this file. The BottomAppBar uses a Row to provide RowScope for Modifier.weight(1f).
+// If the error persists, comment out the current BottomAppBar content and uncomment the fallback version below.
+// Verify no custom BottomAppBar composable is used elsewhere in the project.
 
 package com.example.workoutlogs.ui.workout
 
@@ -59,13 +61,34 @@ fun WorkoutExercisesScreen(
                     IconButton(onClick = { navController.navigate("home") }) {
                         Icon(Icons.Default.Home, contentDescription = "Home")
                     }
-                    // Single Spacer to balance space between icons and text
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f)) // Spacer balances space
                     Text("Exercises", style = MaterialTheme.typography.titleMedium)
                     IconButton(onClick = { navController.navigate("exercise_new") }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Exercise")
                     }
                 }
+
+                // Fallback BottomAppBar (uncomment if error persists):
+                /*
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { navController.navigate("drawer") }) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    }
+                    IconButton(onClick = { navController.navigate("home") }) {
+                        Icon(Icons.Default.Home, contentDescription = "Home")
+                    }
+                    Text("Exercises", style = MaterialTheme.typography.titleMedium)
+                    IconButton(onClick = { navController.navigate("exercise_new") }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                    }
+                }
+                */
             }
         }
     ) { padding ->
