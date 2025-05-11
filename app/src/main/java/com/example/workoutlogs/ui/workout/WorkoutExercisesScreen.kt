@@ -1,16 +1,16 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 11:24:00 GMT+03:00
+// Timestamp: Updated on 2025-05-11 12:24:00 GMT+03:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 // Note: Replace the existing WorkoutExercisesScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // with this file. The BottomAppBar uses a Row to provide RowScope for Modifier.weight(1f).
-// If the error persists:
-// 1. Share lines 130–145 of your WorkoutExercisesScreen.kt to identify the weight error at line 138.
-// 2. Comment out the current BottomAppBar content and uncomment the fallback version below.
-// 3. Search project for 'BottomAppBar' to verify no custom composable is used.
-// 4. Clean project, invalidate caches, check Compose/Kotlin versions, sync Gradle (see instructions).
-// 5. Share gradle/libs.versions.toml, app/build.gradle.kts, and git diff output.
+// If errors persist:
+// 1. Share lines 150–165 to verify the DropdownMenu section.
+// 2. Comment out the BottomAppBar content and uncomment the fallback version.
+// 3. Search project for 'BottomAppBar' to verify no custom composable.
+// 4. Clean project, invalidate caches, sync Gradle (see instructions).
+// 5. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output, and stack trace.
 
 package com.example.workoutlogs.ui.workout
 
@@ -72,7 +72,7 @@ fun WorkoutExercisesScreen(
                     }
                 }
 
-                // Fallback BottomAppBar (uncomment if error persists):
+                // Fallback BottomAppBar (uncomment if weight error returns):
                 /*
                 Row(
                     modifier = Modifier
@@ -154,7 +154,7 @@ fun WorkoutExercisesScreen(
                         )
                         categories.forEach { category ->
                             DropdownMenuItem(
-                                -UU text = { Text(category) },
+                                text = { Text(category) },
                                 onClick = {
                                     selectedCategory = category
                                     viewModel.updateSelectedCategory(category)
@@ -222,7 +222,7 @@ fun ExerciseItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween, // Fixed typo from SpaceSevere
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
