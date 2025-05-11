@@ -1,16 +1,15 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 12:24:00 GMT+03:00
+// Timestamp: Updated on 2025-05-11 14:24:00 GMT+03:00
 // Scope: Composable screen for displaying exercises in WorkoutLogs app
 // Note: Replace the existing WorkoutExercisesScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// with this file. The BottomAppBar uses a Row to provide RowScope for Modifier.weight(1f).
+// with this file. The BottomAppBar avoids weight modifier per Gemini's recommendation.
 // If errors persist:
-// 1. Share lines 150–165 to verify the DropdownMenu section.
-// 2. Comment out the BottomAppBar content and uncomment the fallback version.
-// 3. Search project for 'BottomAppBar' to verify no custom composable.
-// 4. Clean project, invalidate caches, sync Gradle (see instructions).
-// 5. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output, and stack trace.
+// 1. Use the fallback BottomAppBar content (already without weight).
+// 2. Search project for 'BottomAppBar' to verify no custom composable.
+// 3. Clean project, invalidate caches, sync Gradle (see instructions).
+// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output, and stack trace from 'gradlew :app:kspDebugKotlin --stacktrace'.
 
 package com.example.workoutlogs.ui.workout
 
@@ -50,50 +49,48 @@ fun WorkoutExercisesScreen(
 
     Scaffold(
         bottomBar = {
-            BottomAppBar {
-                // Row provides RowScope for weight modifier
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { navController.navigate("drawer") }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
-                    }
-                    IconButton(onClick = { navController.navigate("home") }) {
-                        Icon(Icons.Default.Home, contentDescription = "Home")
-                    }
-                    Spacer(modifier = Modifier.weight(1f)) // Spacer balances space
-                    Text("Exercises", style = MaterialTheme.typography.titleMedium)
-                    IconButton(onClick = { navController.navigate("exercise_new") }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Exercise")
-                    }
+            BottomAppBar(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Use BottomAppBar's built-in layout, avoid weight modifier
+                IconButton(onClick = { navController.navigate("drawer") }) {
+                    Icon(Icons.Default.Menu, contentDescription = "Menu")
                 }
-
-                // Fallback BottomAppBar (uncomment if weight error returns):
-                /*
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { navController.navigate("drawer") }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
-                    }
-                    IconButton(onClick = { navController.navigate("home") }) {
-                        Icon(Icons.Default.Home, contentDescription = "Home")
-                    }
-                    Text("Exercises", style = MaterialTheme.typography.titleMedium)
-                    IconButton(onClick = { navController.navigate("exercise_new") }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Exercise")
-                    }
+                IconButton(onClick = { navController.navigate("home") }) {
+                    Icon(Icons.Default.Home, contentDescription = "Home")
                 }
-                */
+                Spacer(modifier = Modifier.width(16.dp)) // Fixed spacing
+                Text(
+                    text = "Exercises",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                IconButton(onClick = { navController.navigate("exercise_new") }) {
+                    Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                }
             }
+
+            // Fallback BottomAppBar (uncomment if needed):
+            /*
+            BottomAppBar(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                IconButton(onClick = { navController.navigate("drawer") }) {
+                    Icon(Icons.Default.Menu, contentDescription = "Menu")
+                }
+                IconButton(onClick = { navController.navigate("home") }) {
+                    Icon(Icons.Default.Home, contentDescription = "Home")
+                }
+                Text(
+                    text = "Exercises",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                IconButton(onClick = { navController.navigate("exercise_new") }) {
+                    Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                }
+            }
+            */
         }
     ) { padding ->
         Column(
