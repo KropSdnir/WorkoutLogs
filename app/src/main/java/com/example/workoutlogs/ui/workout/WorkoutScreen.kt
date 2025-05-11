@@ -12,7 +12,7 @@
 // 2. Uninstall app, clean project, delete .idea folder, invalidate caches, sync Gradle.
 // 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff output, MainActivity.kt, and stack trace from 'gradlew :app:assembleDebug --stacktrace'.
 
-package com.example.workoutlogs.ui.home
+package com.example.workoutlogs.ui.workout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
