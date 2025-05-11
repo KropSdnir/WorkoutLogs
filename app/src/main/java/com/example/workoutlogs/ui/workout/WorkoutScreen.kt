@@ -1,21 +1,21 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 23:30:00 CEST
+// Timestamp: Updated on 2025-05-11 23:59:00 CEST
 // Scope: Composable screen for managing workouts in WorkoutLogs app
 // Note: Replace the existing WorkoutScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// with this file. Fixed long-click calendar (moved combinedClickable to Icon),
-// fixed plus button navigation (simplified, added debug logging).
+// with this file. Fixed plus button navigation (added try-catch, logging),
+// moved SimpleCalendarView/FullCalendarView to bottom above BottomAppBar.
 // Retains centered SimpleCalendarView, long-press calendar, bottom sheet menu,
 // and plus to workout_exercises.
 // Sourced from https://github.com/KropSdnir/WorkoutLogs.
 // Verify this file is applied correctly by checking the Timestamp, BottomAppBar content
-// (bottom sheet menu, long-press calendar, plus to workout_exercises, centered date).
+// (bottom sheet menu, long-press calendar, plus to workout_exercises, centered date at bottom).
 // If issues:
-// 1. Share local WorkoutScreen.kt if long-click or navigation fails.
+// 1. Share local WorkoutScreen.kt if calendar position, long-click, or navigation fails.
 // 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
-// 3. Share Logcat for long-click or navigation issues (search for "WorkoutScreen: Navigating to workout_exercises").
-// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
+// 3. Share Logcat for navigation issues (search for "WorkoutScreen: Navigating to workout_exercises" or "WorkoutScreen: Navigation error").
+// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff, WorkoutExercisesScreen.kt.
 
 package com.example.workoutlogs.ui.workout
 
@@ -79,8 +79,12 @@ fun WorkoutScreen(navController: NavController) {
                     )
                     IconButton(
                         onClick = {
-                            Log.d("WorkoutScreen", "Navigating to workout_exercises")
-                            navController.navigate("workout_exercises")
+                            try {
+                                Log.d("WorkoutScreen", "Navigating to workout_exercises")
+                                navController.navigate("workout_exercises")
+                            } catch (e: Exception) {
+                                Log.e("WorkoutScreen", "Navigation error: ${e.message}", e)
+                            }
                         }
                     ) {
                         Icon(Icons.Default.Add, contentDescription = "Add Exercise")
@@ -93,27 +97,31 @@ fun WorkoutScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Screen Placeholder")
+            }
             if (showFullCalendar) {
                 FullCalendarView(
                     selectedDate = selectedDate,
                     onDateSelected = { date ->
                         selectedDate = date
                         showFullCalendar = false
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
             } else {
                 SimpleCalendarView(
                     selectedDate = selectedDate,
-                    onClick = { showFullCalendar = true }
+                    onClick = { showFullCalendar = true },
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Screen Placeholder")
             }
         }
         if (showMenuSheet) {

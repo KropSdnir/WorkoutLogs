@@ -1,18 +1,18 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 23:30:00 CEST
+// Timestamp: Updated on 2025-05-11 23:59:00 CEST
 // Scope: Composable screen for the home page of WorkoutLogs app
 // Note: Replace the existing HomeScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/home/HomeScreen.kt
-// with this file. Fixed long-click calendar (moved combinedClickable to Icon),
-// retained ModalBottomSheet menu and plus dropdown.
+// with this file. Moved SimpleCalendarView/FullCalendarView to bottom above BottomAppBar,
+// retained long-click calendar, ModalBottomSheet menu, and plus dropdown.
 // Retains centered SimpleCalendarView, long-press calendar (resets to today),
 // bottom sheet menu.
 // Sourced from https://github.com/KropSdnir/WorkoutLogs.
 // Verify this file is applied correctly by checking the Timestamp, BottomAppBar content
-// (bottom sheet menu, long-press calendar, centered date).
+// (bottom sheet menu, long-press calendar, centered date at bottom).
 // If issues:
-// 1. Share local HomeScreen.kt if long-click or navigation fails.
+// 1. Share local HomeScreen.kt if calendar position, long-click, or navigation fails.
 // 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
 // 3. Share Logcat for long-click or navigation issues.
 // 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
@@ -107,27 +107,31 @@ fun HomeScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Screen Placeholder")
+            }
             if (showFullCalendar) {
                 FullCalendarView(
                     selectedDate = selectedDate,
                     onDateSelected = { date ->
                         selectedDate = date
                         showFullCalendar = false
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
             } else {
                 SimpleCalendarView(
                     selectedDate = selectedDate,
-                    onClick = { showFullCalendar = true }
+                    onClick = { showFullCalendar = true },
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Screen Placeholder")
             }
         }
         if (showMenuSheet) {

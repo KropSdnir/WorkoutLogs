@@ -1,29 +1,29 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/common/FullCalendarView.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 20:30:00 CEST
-// Scope: Month grid calendar composable for WorkoutLogs app
-// Note: Replace this file at
+// Timestamp: Updated on 2025-05-11 23:59:00 CEST
+// Scope: Composable for full calendar view in WorkoutLogs app
+// Note: Replace the existing FullCalendarView.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/common/FullCalendarView.kt
-// with this file if changes occurred. No changes since R72.
-// Supports date selection and return to SimpleCalendarView.
-// Sourced from https://github.com/KropSdnir/WorkoutLogs (ui/common/).
-// Verify this file is applied correctly by checking the Timestamp and calendar display.
-// If incorrect:
-// 1. Share local FullCalendarView.kt from ui/common/.
+// with this file. Updated to show single month, ~8 rows (month label, day labels, ~6 date rows),
+// positioned at bottom via HomeScreen.kt/WorkoutScreen.kt.
+// Retains date selection, integrates with SimpleCalendarView.
+// Sourced from https://github.com/KropSdnir/WorkoutLogs.
+// Verify this file is applied correctly by checking the Timestamp, FullCalendarView content
+// (single month, month label, day labels, ~8 rows, bottom position).
+// If issues:
+// 1. Share local FullCalendarView.kt if calendar display or selection fails.
 // 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
-// 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
+// 3. Share Logcat for calendar issues.
+// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
 
 package com.example.workoutlogs.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -35,90 +35,109 @@ import java.util.*
 @Composable
 fun FullCalendarView(
     selectedDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit
+    onDateSelected: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val currentMonth = remember { mutableStateOf(selectedDate.withDayOfMonth(1)) }
+    val year = selectedDate.year
+    val month = selectedDate.month
+    val firstDayOfMonth = LocalDate.of(year, month, 1)
+    val lastDayOfMonth = firstDayOfMonth.plusMonths(1).minusDays(1)
+    val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7 // Sunday = 0, Monday = 1, etc.
+    val daysInMonth = lastDayOfMonth.dayOfMonth
+    val monthLabel = month.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " $year"
+    val dayLabels = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    Column(
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
     ) {
-        // Display 3 months (previous, current, next) for scrolling
-        items(3) { index ->
-            val monthDate = currentMonth.value.plusMonths((index - 1).toLong())
-            MonthGrid(monthDate, selectedDate, onDateSelected)
-        }
-    }
-}
-
-@Composable
-fun MonthGrid(
-    date: LocalDate,
-    selectedDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit
-) {
-    val firstDayOfMonth = date.withDayOfMonth(1)
-    val daysInMonth = date.lengthOfMonth()
-    val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7 // Sunday = 0
-
-    Column {
+        // Month label
         Text(
-            text = firstDayOfMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + firstDayOfMonth.year,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 8.dp)
+            text = monthLabel,
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            textAlign = TextAlign.Center
         )
-        // Days of the week header
+        // Day labels
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat").forEach { day ->
+            dayLabels.forEach { day ->
                 Text(
                     text = day,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(4.dp),
                     textAlign = TextAlign.Center
                 )
             }
         }
-        // Month grid
-        Column {
-            var day = 1 - firstDayOfWeek
-            for (week in 0 until 6) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    for (dayOfWeek in 0 until 7) {
-                        if (day > 0 && day <= daysInMonth) {
-                            val currentDate = firstDayOfMonth.plusDays((day - 1).toLong())
-                            val isSelected = currentDate == selectedDate
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f)
-                                    .background(
-                                        if (isSelected) MaterialTheme.colorScheme.primary
-                                        else MaterialTheme.colorScheme.surface
-                                    )
-                                    .clickable {
-                                        onDateSelected(currentDate)
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = day.toString(),
-                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary
-                                    else MaterialTheme.colorScheme.onSurface,
-                                    textAlign = TextAlign.Center
-                                )
+        // Date grid (~6 rows)
+        Grid(
+            firstDayOfWeek = firstDayOfWeek,
+            daysInMonth = daysInMonth,
+            selectedDate = selectedDate,
+            year = year,
+            month = month,
+            onDateSelected = onDateSelected
+        )
+    }
+}
+
+@Composable
+private fun Grid(
+    firstDayOfWeek: Int,
+    daysInMonth: Int,
+    selectedDate: LocalDate,
+    year: Int,
+    month: java.time.Month,
+    onDateSelected: (LocalDate) -> Unit
+) {
+    val totalCells = 42 // 6 rows * 7 columns
+    var day = 1
+    repeat(6) { row ->
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            repeat(7) { column ->
+                val index = row * 7 + column
+                val isValidDay = index >= firstDayOfWeek && day <= daysInMonth
+                val date = if (isValidDay) {
+                    LocalDate.of(year, month, day)
+                } else {
+                    null
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .padding(2.dp)
+                        .background(
+                            if (date == selectedDate) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.surface
+                        )
+                        .clickable(enabled = isValidDay) {
+                            if (isValidDay && date != null) {
+                                onDateSelected(date)
                             }
-                        } else {
-                            Box(modifier = Modifier.weight(1f).aspectRatio(1f))
-                        }
-                        day++
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isValidDay) {
+                        Text(
+                            text = day.toString(),
+                            color = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Center
+                        )
+                        if (isValidDay) day++
                     }
                 }
             }
