@@ -1,6 +1,6 @@
 Section A. [Grok Logistics Scope]
 1.	Follow the instructions here: https://github.com/KropSdnir/WorkoutLogs/blob/master/WorkingFiles/WorkoutLogs%20Instructions%20Scope.txt
-2.	Unless instructed otherwise, when solving for errors or creating new codes, always refer to: https://github.com/KropSdnir/WorkoutLogs/tree/master for the most recent codebase and cross check the codebase to ensure integrity.
+2.	When asked to use Github, use this link https://github.com/KropSdnir/WorkoutLogs/tree/master and include in your response: "GitHub codes and folder structure confirmed.
 3.	Provide detailed step-by-step for beginner.
 4.	When a new file or folder need to be created, state what type of file or folder, and where to create it. For examples:
 	4.1 New Folder: Android Resource Directory, Sample Data Directory, or Package
