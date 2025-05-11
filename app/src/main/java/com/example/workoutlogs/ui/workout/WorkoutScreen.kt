@@ -1,23 +1,25 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 23:00:00 CEST
+// Timestamp: Updated on 2025-05-11 23:30:00 CEST
 // Scope: Composable screen for managing workouts in WorkoutLogs app
 // Note: Replace the existing WorkoutScreen.kt at
 // D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// with this file. Fixed Modifier.clickable error (no onLongClick) using combinedClickable,
-// added ExperimentalMaterial3Api for ModalBottomSheet, retained plus navigation.
+// with this file. Fixed long-click calendar (moved combinedClickable to Icon),
+// fixed plus button navigation (simplified, added debug logging).
 // Retains centered SimpleCalendarView, long-press calendar, bottom sheet menu,
 // and plus to workout_exercises.
 // Sourced from https://github.com/KropSdnir/WorkoutLogs.
 // Verify this file is applied correctly by checking the Timestamp, BottomAppBar content
 // (bottom sheet menu, long-press calendar, plus to workout_exercises, centered date).
 // If issues:
-// 1. Share local WorkoutScreen.kt if calendars, menu, or navigation fail.
+// 1. Share local WorkoutScreen.kt if long-click or navigation fails.
 // 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
-// 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
+// 3. Share Logcat for long-click or navigation issues (search for "WorkoutScreen: Navigating to workout_exercises").
+// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
 
 package com.example.workoutlogs.ui.workout
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
@@ -61,14 +63,15 @@ fun WorkoutScreen(navController: NavController) {
                     IconButton(onClick = { navController.navigate("home") }) {
                         Icon(Icons.Default.Home, contentDescription = "Home")
                     }
-                    IconButton(
-                        onClick = { showFullCalendar = !showFullCalendar },
-                        modifier = Modifier.combinedClickable(
-                            onClick = { showFullCalendar = !showFullCalendar },
-                            onLongClick = { selectedDate = LocalDate.now() }
+                    IconButton(onClick = { showFullCalendar = !showFullCalendar }) {
+                        Icon(
+                            imageVector = Icons.Default.CalendarToday,
+                            contentDescription = "Toggle Calendar",
+                            modifier = Modifier.combinedClickable(
+                                onClick = { showFullCalendar = !showFullCalendar },
+                                onLongClick = { selectedDate = LocalDate.now() }
+                            )
                         )
-                    ) {
-                        Icon(Icons.Default.CalendarToday, contentDescription = "Toggle Calendar")
                     }
                     Text(
                         text = "Workouts",
@@ -76,11 +79,8 @@ fun WorkoutScreen(navController: NavController) {
                     )
                     IconButton(
                         onClick = {
-                            navController.navigate("workout_exercises") {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    inclusive = false
-                                }
-                            }
+                            Log.d("WorkoutScreen", "Navigating to workout_exercises")
+                            navController.navigate("workout_exercises")
                         }
                     ) {
                         Icon(Icons.Default.Add, contentDescription = "Add Exercise")
