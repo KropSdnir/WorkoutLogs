@@ -1,6 +1,6 @@
 // File: app/src/main/java/com/example/workoutlogs/data/repository/ExerciseRepository.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-09 13:30:00
+// Timestamp: Updated on 2025-05-10 00:23:00
 // Scope: Repository for exercise-related database operations in WorkoutLogs app
 
 package com.example.workoutlogs.data.repository
@@ -19,5 +19,17 @@ class ExerciseRepository @Inject constructor(
 
     fun getAllExercises(): Flow<List<Exercise>> {
         return exerciseDao.getAllExercises()
+    }
+
+    fun getSelectedExercises(): Flow<List<Exercise>> {
+        return exerciseDao.getSelectedExercises()
+    }
+
+    suspend fun updateSelection(id: Int, isSelected: Boolean) {
+        exerciseDao.updateSelection(id, isSelected)
+    }
+
+    fun getCategories(): Flow<List<String>> {
+        return exerciseDao.getCategories()
     }
 }

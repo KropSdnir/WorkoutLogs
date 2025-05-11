@@ -1,158 +1,99 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/ExerciseNewScreen.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-09 08:00:00
-// Scope: Composable for the new exercise screen with form and database integration in WorkoutLogs app
+// Timestamp: Updated on 2025-05-10 00:23:00
+// Scope: Composable screen for adding new exercises in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.workoutlogs.ui.navigation.DrawerContent
-import kotlinx.coroutines.launch
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun ExerciseNewScreen(
     navController: NavController,
     viewModel: ExerciseViewModel = hiltViewModel()
 ) {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-    var expanded by remember { mutableStateOf(false) }
-    val categories = listOf("Chest", "Back", "Legs", "Arms", "Shoulders", "Core")
+    var name by remember { mutableStateOf(viewModel.name) }
+    var category by remember { mutableStateOf(viewModel.category) }
+    var notes by remember { mutableStateOf(viewModel.notes) }
 
-    ModalNavigationDrawer(
-        drawerContent = {
-            DrawerContent(
-                onItemClick = { route: String ->
-                    scope.launch {
-                        drawerState.close()
-                        navController.navigate(route)
-                    }
+    Scaffold(
+        bottomBar = {
+            BottomAppBar {
+                IconButton(onClick = { navController.navigate("drawer") }) {
+                    Icon(Icons.Default.Menu, contentDescription = "Menu")
                 }
-            )
-        },
-        drawerState = drawerState
-    ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("New Exercise") },
-                    navigationIcon = {
-                        IconButton(onClick = { navController.navigate("home") }) {
-                            Icon(
-                                imageVector = Icons.Default.Home,
-                                contentDescription = "Home"
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Menu"
-                            )
-                        }
-                    }
-                )
+                IconButton(onClick = { navController.navigate("home") }) {
+                    Icon(Icons.Default.Home, contentDescription = "Home")
+                }
+                Spacer(Modifier.weight(1f))
+                Text("New Exercise", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.weight(1f))
+                IconButton(onClick = { /* No-op, Save button handles this */ }) {
+                    Icon(Icons.Default.Add, contentDescription = "Add Exercise")
+                }
             }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
+        ) {
+            OutlinedTextField(
+                value = name,
+                onValueChange = {
+                    name = it
+                    viewModel.updateName(it)
+                },
+                label = { Text("Name") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = category,
+                onValueChange = {
+                    category = it
+                    viewModel.updateCategory(it)
+                },
+                label = { Text("Category") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = notes,
+                onValueChange = {
+                    notes = it
+                    viewModel.updateNotes(it)
+                },
+                label = { Text("Notes") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    viewModel.saveExercise {
+                        navController.popBackStack()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = name.isNotBlank() && category.isNotBlank()
             ) {
-                // Name TextField
-                OutlinedTextField(
-                    value = viewModel.name,
-                    onValueChange = { viewModel.updateName(it) },
-                    label = { Text("Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-
-                // Category Dropdown with Icon Button
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        OutlinedTextField(
-                            value = viewModel.category,
-                            onValueChange = { viewModel.updateCategory(it) },
-                            label = { Text("Category") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                            }
-                        )
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            categories.forEach { category ->
-                                DropdownMenuItem(
-                                    text = { Text(category) },
-                                    onClick = {
-                                        viewModel.updateCategory(category)
-                                        expanded = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-                    IconButton(
-                        onClick = { navController.navigate("categories") },
-                        modifier = Modifier.padding(start = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowDropDown,
-                            contentDescription = "Open Categories"
-                        )
-                    }
-                }
-
-                // Notes TextField
-                OutlinedTextField(
-                    value = viewModel.notes,
-                    onValueChange = { viewModel.updateNotes(it) },
-                    label = { Text("Notes") },
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 4
-                )
-
-                // Save Button
-                Button(
-                    onClick = {
-                        viewModel.saveExercise {
-                            navController.navigate("workout_exercises") {
-                                popUpTo("exercise_new") { inclusive = true }
-                            }
-                        }
-                    },
-                    modifier = Modifier.align(Alignment.End),
-                    enabled = viewModel.name.isNotBlank() && viewModel.category.isNotBlank()
-                ) {
-                    Text("Save")
-                }
+                Text("Save")
             }
         }
     }

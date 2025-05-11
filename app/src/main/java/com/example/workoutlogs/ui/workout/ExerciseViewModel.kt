@@ -1,6 +1,6 @@
 // File: app/src/main/java/com/example/workoutlogs/ui/workout/ExerciseViewModel.kt
 // Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-09 13:30:00
+// Timestamp: Updated on 2025-05-10 00:23:00
 // Scope: ViewModel for managing exercise data in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
@@ -15,6 +15,7 @@ import com.example.workoutlogs.data.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,13 +27,28 @@ class ExerciseViewModel @Inject constructor(
     var name by mutableStateOf("")
     var category by mutableStateOf("")
     var notes by mutableStateOf("")
+    var searchQuery by mutableStateOf("")
+    var selectedCategory by mutableStateOf("")
+    var showSelectedOnly by mutableStateOf(false)
 
-    val exercises: StateFlow<List<Exercise>> = exerciseRepository.getAllExercises()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    val exercises: StateFlow<List<Exercise>> = combine(
+        exerciseRepository.getAllExercises(),
+        exerciseRepository.getSelectedExercises()
+    ) { all, selected ->
+        val filtered = all.filter { exercise ->
+            (searchQuery.isBlank() || exercise.name.contains(searchQuery, ignoreCase = true)) &&
+                    (selectedCategory.isBlank() || exercise.category == selectedCategory) &&
+                    (!showSelectedOnly || selected.contains(exercise))
+        }
+        filtered
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val selectedExercises: StateFlow<List<Exercise>> =
+        exerciseRepository.getSelectedExercises()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val categories: StateFlow<List<String>> = exerciseRepository.getCategories()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun updateName(newName: String) {
         name = newName
@@ -44,6 +60,24 @@ class ExerciseViewModel @Inject constructor(
 
     fun updateNotes(newNotes: String) {
         notes = newNotes
+    }
+
+    fun updateSearchQuery(query: String) {
+        searchQuery = query
+    }
+
+    fun updateSelectedCategory(newCategory: String) {
+        selectedCategory = newCategory
+    }
+
+    fun toggleShowSelectedOnly() {
+        showSelectedOnly = !showSelectedOnly
+    }
+
+    fun toggleExerciseSelection(id: Int, isSelected: Boolean) {
+        viewModelScope.launch {
+            exerciseRepository.updateSelection(id, isSelected)
+        }
     }
 
     fun saveExercise(onSuccess: () -> Unit) {
