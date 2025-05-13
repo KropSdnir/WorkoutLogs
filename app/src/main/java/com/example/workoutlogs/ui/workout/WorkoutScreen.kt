@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// 2025-05-13 18:26:00 CEST
+// 2025-05-13 18:45:00 CEST
 // Composable screen for displaying workout details in WorkoutLogs app
 package com.example.workoutlogs.ui.workout
 
