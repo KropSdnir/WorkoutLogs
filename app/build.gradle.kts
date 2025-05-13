@@ -65,6 +65,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     testImplementation(libs.mockito.core)
+    implementation("com.kizitonwose.calendar:compose:2.5.1")
 }
 
 // Ensure Room KSP processes the database

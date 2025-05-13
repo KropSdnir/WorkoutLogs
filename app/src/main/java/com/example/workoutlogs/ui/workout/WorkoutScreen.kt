@@ -1,48 +1,46 @@
-// File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-12 02:00:00 CEST
-// Scope: Composable screen for managing workouts in WorkoutLogs app
-// Note: Replace the existing WorkoutScreen.kt at
-// D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// with this file. Updated ModalBottomSheet for FullCalendarView to appear above BottomAppBar,
-// retains SimpleCalendarView at bottom, long-press calendar, bottom sheet menu, plus navigation.
-// Sourced from R83 provided code.
-// Verify this file is applied correctly by checking the Timestamp, BottomAppBar visibility,
-// FullCalendarView overlay above BottomAppBar, and other functionality.
-// If issues:
-// 1. Share local WorkoutScreen.kt if BottomAppBar is covered, navigation, or calendar position fails.
-// 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
-// 3. Share Logcat for navigation issues (search for "WorkoutScreen: Navigating", "Navigation error").
-// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, WorkoutExercisesScreen.kt.
-
+// app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
+// 2025-05-13 18:26:00 CEST
+// Composable screen for displaying workout details in WorkoutLogs app
 package com.example.workoutlogs.ui.workout
 
-import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.DpOffset
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.workoutlogs.ui.common.FullCalendarView
-import com.example.workoutlogs.ui.common.SimpleCalendarView
+import com.example.workoutlogs.data.model.Exercise
+import com.kizitonwose.calendar.compose.WeekCalendar
+import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import java.time.LocalDate
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun WorkoutScreen(navController: NavController) {
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var showFullCalendar by remember { mutableStateOf(false) }
-    var showMenuSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+fun WorkoutScreen(
+    navController: NavController,
+    viewModel: ExerciseViewModel = hiltViewModel()
+) {
+    val selectedExercises by viewModel.selectedExercises.collectAsState(initial = emptyList())
+    var showMenu by remember { mutableStateOf(false) }
+    val calendarState = rememberWeekCalendarState(
+        startDate = LocalDate.now().minusDays(365),
+        endDate = LocalDate.now().plusDays(365),
+        firstDayOfWeek = java.time.DayOfWeek.MONDAY
+    )
 
     Scaffold(
         bottomBar = {
@@ -56,150 +54,151 @@ fun WorkoutScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { showMenuSheet = true }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            offset = DpOffset(0.dp, (-150).dp)
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Home") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("home")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Calendar") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("home")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Workout") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("workout")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Exercises") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("workout_exercises")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Settings") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("settings")
+                                }
+                            )
+                        }
                     }
                     IconButton(onClick = { navController.navigate("home") }) {
                         Icon(Icons.Default.Home, contentDescription = "Home")
                     }
-                    IconButton(onClick = { showFullCalendar = true }) {
-                        Icon(
-                            imageVector = Icons.Default.CalendarToday,
-                            contentDescription = "Toggle Calendar",
-                            modifier = Modifier.combinedClickable(
-                                onClick = { showFullCalendar = true },
-                                onLongClick = { selectedDate = LocalDate.now() }
-                            )
-                        )
-                    }
+                    Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "Workouts",
-                        style = MaterialTheme.typography.titleMedium
+                        text = "Workout",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.align(Alignment.CenterVertically)
                     )
-                    IconButton(
-                        onClick = {
-                            try {
-                                Log.d("WorkoutScreen", "Navigating to workout_exercises")
-                                Log.d("WorkoutScreen", "NavController state: current=${navController.currentDestination?.route}")
-                                navController.navigate("workout_exercises")
-                                Log.d("WorkoutScreen", "Navigation triggered successfully")
-                            } catch (e: Exception) {
-                                Log.e("WorkoutScreen", "Navigation error: ${e.message}", e)
-                            }
-                        }
-                    ) {
+                    IconButton(onClick = { navController.navigate("exercise_new") }) {
                         Icon(Icons.Default.Add, contentDescription = "Add Exercise")
                     }
                 }
             }
         }
-    ) { innerPadding ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    top = innerPadding.calculateTopPadding(),
-                    start = innerPadding.calculateStartPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
-                    end = innerPadding.calculateEndPadding(androidx.compose.ui.unit.LayoutDirection.Ltr)
-                ),
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(padding)
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Screen Placeholder")
-            }
-            SimpleCalendarView(
-                selectedDate = selectedDate,
-                onClick = { showFullCalendar = true },
+            WeekCalendar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = innerPadding.calculateBottomPadding())
+                    .padding(8.dp),
+                state = calendarState,
+                dayContent = { day ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = day.date.dayOfMonth.toString(),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
             )
-        }
-        if (showMenuSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showMenuSheet = false },
-                sheetState = sheetState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .offset(y = (-innerPadding.calculateBottomPadding()))
-            ) {
-                Column(
+            if (selectedExercises.isEmpty()) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    contentAlignment = Alignment.Center
                 ) {
-                    TextButton(
-                        onClick = {
-                            showMenuSheet = false
-                            navController.navigate("home")
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Home")
-                    }
-                    TextButton(
-                        onClick = {
-                            showMenuSheet = false
-                            showFullCalendar = true
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Calendar")
-                    }
-                    TextButton(
-                        onClick = {
-                            showMenuSheet = false
-                            navController.navigate("workout")
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Workout")
-                    }
-                    TextButton(
-                        onClick = {
-                            showMenuSheet = false
-                            navController.navigate("workout_exercises")
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Exercises")
-                    }
-                    TextButton(
-                        onClick = {
-                            showMenuSheet = false
-                            navController.navigate("settings")
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Settings")
+                    Text(
+                        text = "No exercises selected. Add from Exercises screen.",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    items(selectedExercises) { exercise ->
+                        ExerciseItem(exercise)
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
         }
-        if (showFullCalendar) {
-            ModalBottomSheet(
-                onDismissRequest = { showFullCalendar = false },
-                sheetState = sheetState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .offset(y = (-innerPadding.calculateBottomPadding()))
-            ) {
-                FullCalendarView(
-                    selectedDate = selectedDate,
-                    onDateSelected = { date ->
-                        selectedDate = date
-                        showFullCalendar = false
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
+    }
+}
+
+@Composable
+fun ExerciseItem(exercise: Exercise) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { /* No action for now */ },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = exercise.name,
+                    style = MaterialTheme.typography.titleMedium
                 )
+                Text(
+                    text = "Category: ${exercise.category}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                exercise.notes?.let {
+                    Text(
+                        text = "Notes: $it",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
         }
     }

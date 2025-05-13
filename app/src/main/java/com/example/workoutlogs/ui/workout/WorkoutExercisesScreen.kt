@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// 2025-05-13 17:50:00 CEST
+// 2025-05-13 18:26:00 CEST
 // Composable screen for displaying exercises in WorkoutLogs app
 package com.example.workoutlogs.ui.workout
 
@@ -58,7 +58,7 @@ fun WorkoutExercisesScreen(
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false },
-                            offset = DpOffset(0.dp, (-150).dp) // Upward menu
+                            offset = DpOffset(0.dp, (-150).dp)
                         ) {
                             DropdownMenuItem(
                                 text = { Text("Home") },
@@ -71,7 +71,7 @@ fun WorkoutExercisesScreen(
                                 text = { Text("Calendar") },
                                 onClick = {
                                     showMenu = false
-                                    navController.navigate("home") // Navigate to home for calendar
+                                    navController.navigate("home")
                                 }
                             )
                             DropdownMenuItem(
@@ -102,7 +102,7 @@ fun WorkoutExercisesScreen(
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "Workout Exercises",
+                        text = "Exercises",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
@@ -135,11 +135,19 @@ fun WorkoutExercisesScreen(
                     modifier = Modifier.fillMaxWidth(0.6f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = { navController.navigate("workout_exercises") },
-                    enabled = selectedExercises.isNotEmpty()
-                ) {
-                    Text("Add to Workout")
+                Row {
+                    Button(
+                        onClick = { viewModel.toggleShowSelectedOnly() },
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Text("Selected")
+                    }
+                    Button(
+                        onClick = { navController.navigate("workout") },
+                        enabled = selectedExercises.isNotEmpty()
+                    ) {
+                        Text("Add to Workout")
+                    }
                 }
             }
             Row(
@@ -148,9 +156,7 @@ fun WorkoutExercisesScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 var expanded by remember { mutableStateOf(false) }
-                Box(
-                    modifier = Modifier.weight(1f)
-                ) {
+                Box {
                     OutlinedButton(
                         onClick = { expanded = true },
                         modifier = Modifier.fillMaxWidth()
@@ -180,12 +186,6 @@ fun WorkoutExercisesScreen(
                             )
                         }
                     }
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = { viewModel.toggleShowSelectedOnly() }
-                ) {
-                    Text("Selected")
                 }
             }
             if (exercises.isEmpty()) {
