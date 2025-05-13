@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// 2025-05-13 18:45:00 CEST
+// 2025-05-13 18:26:00 CEST
 // Composable screen for displaying exercises in WorkoutLogs app
 package com.example.workoutlogs.ui.workout
 
@@ -102,7 +102,7 @@ fun WorkoutExercisesScreen(
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "Exercises",
+                        text = "Workout Exercises",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
@@ -137,12 +137,6 @@ fun WorkoutExercisesScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Row {
                     Button(
-                        onClick = { viewModel.toggleShowSelectedOnly() },
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Text("Selected")
-                    }
-                    Button(
                         onClick = { navController.navigate("workout") },
                         enabled = selectedExercises.isNotEmpty()
                     ) {
@@ -153,39 +147,45 @@ fun WorkoutExercisesScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 var expanded by remember { mutableStateOf(false) }
-                Box {
-                    OutlinedButton(
-                        onClick = { expanded = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(if (selectedCategory.isBlank()) "All Categories" else selectedCategory)
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
+                OutlinedButton(
+                    onClick = { expanded = true },
+                    modifier = Modifier.fillMaxWidth().weight(1f)
+                ) {
+                    Text(if (selectedCategory.isBlank()) "All Categories" else selectedCategory)
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("All Categories") },
+                        onClick = {
+                            selectedCategory = ""
+                            viewModel.updateSelectedCategory("")
+                            expanded = false
+                        }
+                    )
+                    categories.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text("All Categories") },
+                            text = { Text(category) },
                             onClick = {
-                                selectedCategory = ""
-                                viewModel.updateSelectedCategory("")
+                                selectedCategory = category
+                                viewModel.updateSelectedCategory(category)
                                 expanded = false
                             }
                         )
-                        categories.forEach { category ->
-                            DropdownMenuItem(
-                                text = { Text(category) },
-                                onClick = {
-                                    selectedCategory = category
-                                    viewModel.updateSelectedCategory(category)
-                                    expanded = false
-                                }
-                            )
-                        }
                     }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { viewModel.toggleShowSelectedOnly() },
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Text("Selected")
                 }
             }
             if (exercises.isEmpty()) {
@@ -236,7 +236,9 @@ fun ExerciseItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = exercise.name,
                     style = MaterialTheme.typography.titleMedium
