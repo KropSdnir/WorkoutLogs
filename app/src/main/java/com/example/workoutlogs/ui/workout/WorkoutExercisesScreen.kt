@@ -1,18 +1,6 @@
-// File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-11 20:30:00 CEST
-// Scope: Composable screen for displaying exercises in WorkoutLogs app
-// Note: Replace the existing WorkoutExercisesScreen.kt at
-// D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// with this file. Updated Menu button for upward menu.
-// Sourced from https://github.com/KropSdnir/WorkoutLogs.
-// Verify this file is applied correctly by checking the Timestamp and BottomAppBar content
-// (upward menu).
-// If issues:
-// 1. Share local WorkoutExercisesScreen.kt.
-// 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
-// 3. Share gradle/libs.versions.toml, app/build.gradle.kts, git diff.
-
+// app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
+// 2025-05-13 17:50:00 CEST
+// Composable screen for displaying exercises in WorkoutLogs app
 package com.example.workoutlogs.ui.workout
 
 import androidx.compose.foundation.clickable
@@ -114,7 +102,7 @@ fun WorkoutExercisesScreen(
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "Exercises",
+                        text = "Workout Exercises",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
@@ -147,19 +135,11 @@ fun WorkoutExercisesScreen(
                     modifier = Modifier.fillMaxWidth(0.6f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Row {
-                    Button(
-                        onClick = { viewModel.toggleShowSelectedOnly() },
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Text("Selected")
-                    }
-                    Button(
-                        onClick = { navController.navigate("workout_exercises") },
-                        enabled = selectedExercises.isNotEmpty()
-                    ) {
-                        Text("Add to Workout")
-                    }
+                Button(
+                    onClick = { navController.navigate("workout_exercises") },
+                    enabled = selectedExercises.isNotEmpty()
+                ) {
+                    Text("Add to Workout")
                 }
             }
             Row(
@@ -168,7 +148,9 @@ fun WorkoutExercisesScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 var expanded by remember { mutableStateOf(false) }
-                Box {
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
                     OutlinedButton(
                         onClick = { expanded = true },
                         modifier = Modifier.fillMaxWidth()
@@ -198,6 +180,12 @@ fun WorkoutExercisesScreen(
                             )
                         }
                     }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { viewModel.toggleShowSelectedOnly() }
+                ) {
+                    Text("Selected")
                 }
             }
             if (exercises.isEmpty()) {
