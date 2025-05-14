@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/data/db/dao/ExerciseDao.kt
-// Timestamp: 2025-05-14 19:17:00
+// Timestamp: 2025-05-14 19:28:00
 // Scope: Room DAO for exercise operations in WorkoutLogs app
 
 package com.example.workoutlogs.data.db.dao
@@ -15,6 +15,9 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercises")
     fun getAllExercises(): Flow<List<Exercise>>
 
+    @Query("SELECT * FROM exercises")
+    suspend fun getAllExercisesSnapshot(): List<Exercise>
+
     @Query("SELECT * FROM exercises WHERE isSelected = 1")
     fun getSelectedExercises(): Flow<List<Exercise>>
 
@@ -23,6 +26,9 @@ interface ExerciseDao {
 
     @Query("UPDATE exercises SET isSelected = :isSelected WHERE id = :id")
     suspend fun updateSelection(id: Int, isSelected: Boolean)
+
+    @Insert
+    suspend fun insert(exercise: Exercise)
 
     @Insert
     suspend fun insertExercise(exercise: Exercise)
