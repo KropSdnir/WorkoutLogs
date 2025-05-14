@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// Timestamp: 2025-05-14 18:43:00
+// Timestamp: 2025-05-14 18:50:00
 // Scope: Composable screen for managing workouts and displaying selected exercises in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout

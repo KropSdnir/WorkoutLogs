@@ -1,100 +1,107 @@
-// File: app/src/main/java/com/example/workoutlogs/ui/workout/ExerciseViewModel.kt
-// Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-10 00:23:00
-// Scope: ViewModel for managing exercise data in WorkoutLogs app
+// app/src/main/java/com/example/workoutlogs/ui/workout/ExerciseViewModel.kt
+// Timestamp: 2025-05-14 18:50:00
+// Scope: ViewModel for managing exercises in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workoutlogs.data.db.dao.ExerciseDao
 import com.example.workoutlogs.data.model.Exercise
-import com.example.workoutlogs.data.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
-    private val exerciseRepository: ExerciseRepository
+    private val exerciseDao: ExerciseDao,
+    private val defaultExercises: List<Exercise>
 ) : ViewModel() {
-    var name by mutableStateOf("")
-    var category by mutableStateOf("")
-    var notes by mutableStateOf("")
-    var searchQuery by mutableStateOf("")
-    var selectedCategory by mutableStateOf("")
-    var showSelectedOnly by mutableStateOf(false)
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: String get() = _searchQuery.value
+
+    private val _selectedCategory = MutableStateFlow("")
+    val selectedCategory: String get() = _selectedCategory.value
+
+    private val _showSelectedOnly = MutableStateFlow(false)
+    val showSelectedOnly: Boolean get() = _showSelectedOnly.value
 
     val exercises: StateFlow<List<Exercise>> = combine(
-        exerciseRepository.getAllExercises(),
-        exerciseRepository.getSelectedExercises()
-    ) { all, selected ->
-        val filtered = all.filter { exercise ->
-            (searchQuery.isBlank() || exercise.name.contains(searchQuery, ignoreCase = true)) &&
-                    (selectedCategory.isBlank() || exercise.category == selectedCategory) &&
-                    (!showSelectedOnly || selected.contains(exercise))
-        }
-        filtered
+        exerciseDao.getAllExercises(),
+        _searchQuery,
+        _selectedCategory,
+        _showSelectedOnly
+    ) { exercises, query, category, showSelectedOnly ->
+        exercises
+            .filter { it.name.contains(query, ignoreCase = true) }
+            .filter { if (category.isNotBlank()) it.category == category else true }
+            .filter { if (showSelectedOnly) it.isSelected else true }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val selectedExercises: StateFlow<List<Exercise>> =
-        exerciseRepository.getSelectedExercises()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val categories: StateFlow<List<String>> = exerciseRepository.getCategories()
+    val selectedExercises: StateFlow<List<Exercise>> = exercises
+        .map { it.filter { exercise -> exercise.isSelected } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun updateName(newName: String) {
-        name = newName
-    }
+    val categories: StateFlow<List<String>> = exercises
+        .map { it.map { exercise -> exercise.category }.distinct().sorted() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun updateCategory(newCategory: String) {
-        category = newCategory
-    }
-
-    fun updateNotes(newNotes: String) {
-        notes = newNotes
+    init {
+        viewModelScope.launch {
+            val existingExercises = exerciseDao.getAllExercisesSnapshot()
+            if (existingExercises.isEmpty()) {
+                defaultExercises.forEach { exercise ->
+                    exerciseDao.insert(exercise)
+                    Log.d("ExerciseViewModel", "Inserted default exercise: ${exercise.name}")
+                }
+            } else {
+                Log.d("ExerciseViewModel", "Found ${existingExercises.size} existing exercises")
+            }
+        }
     }
 
     fun updateSearchQuery(query: String) {
-        searchQuery = query
+        _searchQuery.value = query
+        Log.d("ExerciseViewModel", "Updated search query: $query")
     }
 
-    fun updateSelectedCategory(newCategory: String) {
-        selectedCategory = newCategory
+    fun updateSelectedCategory(category: String) {
+        _selectedCategory.value = category
+        Log.d("ExerciseViewModel", "Selected category: $category")
     }
 
     fun toggleShowSelectedOnly() {
-        showSelectedOnly = !showSelectedOnly
+        _showSelectedOnly.value = !_showSelectedOnly.value
+        Log.d("ExerciseViewModel", "Show selected only: ${_showSelectedOnly.value}")
     }
 
     fun toggleExerciseSelection(id: Int, isSelected: Boolean) {
         viewModelScope.launch {
-            exerciseRepository.updateSelection(id, isSelected)
+            exerciseDao.updateSelection(id, isSelected)
+            Log.d("ExerciseViewModel", "Toggled exercise ID $id to selected: $isSelected")
         }
     }
 
-    fun saveExercise(onSuccess: () -> Unit) {
+    fun addExercise(name: String, category: String, notes: String?) {
         viewModelScope.launch {
-            if (name.isNotBlank() && category.isNotBlank()) {
-                val exercise = Exercise(
-                    name = name,
-                    category = category,
-                    notes = notes.takeIf { it.isNotBlank() }
-                )
-                exerciseRepository.insertExercise(exercise)
-                println("Exercise saved: $exercise") // Debug log
-                name = ""
-                category = ""
-                notes = ""
-                onSuccess()
-            }
+            val newExercise = Exercise(
+                id = 0, // Auto-generated by Room
+                name = name,
+                category = category,
+                notes = notes,
+                isSelected = false
+            )
+            exerciseDao.insert(newExercise)
+            Log.d("ExerciseViewModel", "Added new exercise: $name")
         }
+    }
+
+    fun getExerciseById(id: Int): Exercise? {
+        val exercise = exercises.value.find { it.id == id }
+        Log.d("ExerciseViewModel", "Fetched exercise ID $id: ${exercise?.name ?: "Not found"}")
+        return exercise
     }
 }
