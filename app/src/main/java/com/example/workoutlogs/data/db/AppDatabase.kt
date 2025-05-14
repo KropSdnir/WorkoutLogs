@@ -1,6 +1,6 @@
 // app/src/main/java/com/example/workoutlogs/data/db/AppDatabase.kt
-// Timestamp: 2025-05-14 18:43:00
-// Scope: Room database definition for WorkoutLogs app
+// Timestamp: 2025-05-14 19:03:00
+// Scope: Room database configuration for WorkoutLogs app
 
 package com.example.workoutlogs.data.db
 
