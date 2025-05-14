@@ -73,7 +73,7 @@ fun WorkoutScreen(navController: NavController) {
                         )
                     }
                     Text(
-                        text = "Workouts",
+                        text = "Workout",
                         style = MaterialTheme.typography.titleMedium
                     )
                     IconButton(

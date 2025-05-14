@@ -9,7 +9,7 @@ Section A. [Grok Logistics Scope]
 	4.2 New Kotlin Class File:Class, File, Interface, Data class, Enum class, Annotation, Kotlin script, or Object
 5.	Responses: label each response with an "R", and a numeral order and a timestamp. At the end of the responses, provide a list of files that are modified or created. For example: R18.
 	5.1	All codes need to be in a downloadable file such as x-kotlin file, .kt or xml
-	5.2	In the downloadable file: add comment to the top of each file: full path, updated timestamp, and scope. 
+	5.2	In the downloadable file: add comment to the top of each file: full path, updated timestamp, and scope. Do not use ``` backticks.
 	5.4 Example: 	// File: app/src/main/java/com/example/workoutlogs/ui/workout/CategoriesScreen.kt
 					// Timestamp: Updated onill  2025-05-06 18:30:00
 					// Scope: should explain what the file does. For example: Manages category list shared with ExerciseDetailScreen and other screens
@@ -29,11 +29,9 @@ Section B. [App Technical Scope]
 7.	Use Model-View-ViewModel (for example: https://www.geeksforgeeks.org/mvvm-model-view-viewmodel-architecture-pattern-in-android/, but give your recommendation if you think you have better ideas in organization and structure).
 
 Section C: Codes modification method.
-1. Verify the original file (286 lines, https://github.com/KropSdnir/WorkoutLogs/...).
-2. Change the BottomAppBar title to "Workout".
-3. Move the "X" button to the "Y" Row.
-4. Preserve all functionality (search, navigation, etc.).
-5. Ensure ~286 lines.
+1. Verify the original file.
+4. Preserve all functionality unless asked specifically to change.
+5. Ensure line counts match closely to the original files when adding features.
 6. Cross-check changes.
 7. Provide artifact and instructions.
 8. If you need to confirm any codes or dependencies, confirm it yourself by scanning the codebase in the specific files in GitHub.
@@ -80,3 +78,19 @@ com.workoutlogs/
 ├── di/
 │   └── AppModule.kt
 └── MainActivity.kt
+
+
+When resume:
+Don't forget to follow InstructionsScope at https://github.com/KropSdnir/WorkoutLogs/blob/master/WorkingFiles/WorkoutLogs%20Instructions%20Scope.txt and label your responses like R# and timestamp, and all files with comments with full path, timestamp and scope, no backticks
+
+read Github for latest codes for all files, especially : https://github.com/KropSdnir/WorkoutLogs/blob/master/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt https://github.com/KropSdnir/WorkoutLogs/blob/master/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutViewModel.kt
+
+Make sure to compare number of lines to match new file with original file.
+
+Error:
+> Task :app:compileDebugKotlin FAILED
+e: file:///D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt:122:58 Unresolved reference 'getExerciseById'.
+e: file:///D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutViewModel.kt:29:10 Unresolved reference 'stateIn'.
+e: file:///D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutViewModel.kt:29:34 Unresolved reference 'SharingStarted'.
+e: file:///D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutViewModel.kt:29:72 Cannot infer type for this parameter. Please specify it explicitly.
+
