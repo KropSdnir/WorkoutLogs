@@ -1,6 +1,7 @@
-// app/src/main/java/com/example/workoutlogs/data/db/dao/ExerciseDao.kt
-// Timestamp: 2025-05-14 19:28:00
-// Scope: Room DAO for exercise operations in WorkoutLogs app
+// File: app/src/main/java/com/example/workoutlogs/data/db/dao/ExerciseDao.kt
+// Version: 0.0.1 first full boot
+// Timestamp: Updated on 2025-05-10 00:23:00
+// Scope: Room DAO for exercise-related database operations in WorkoutLogs app
 
 package com.example.workoutlogs.data.db.dao
 
@@ -12,24 +13,18 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExerciseDao {
-    @Query("SELECT * FROM exercises")
-    fun getAllExercises(): Flow<List<Exercise>>
+    @Insert
+    suspend fun insertExercise(exercise: Exercise)
 
     @Query("SELECT * FROM exercises")
-    suspend fun getAllExercisesSnapshot(): List<Exercise>
+    fun getAllExercises(): Flow<List<Exercise>>
 
     @Query("SELECT * FROM exercises WHERE isSelected = 1")
     fun getSelectedExercises(): Flow<List<Exercise>>
 
-    @Query("SELECT DISTINCT category FROM exercises ORDER BY category")
-    fun getCategories(): Flow<List<String>>
-
     @Query("UPDATE exercises SET isSelected = :isSelected WHERE id = :id")
     suspend fun updateSelection(id: Int, isSelected: Boolean)
 
-    @Insert
-    suspend fun insert(exercise: Exercise)
-
-    @Insert
-    suspend fun insertExercise(exercise: Exercise)
+    @Query("SELECT DISTINCT category FROM exercises")
+    fun getCategories(): Flow<List<String>>
 }
