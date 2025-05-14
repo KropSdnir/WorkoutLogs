@@ -9,7 +9,7 @@ Section A. [Grok Logistics Scope]
 	4.2 New Kotlin Class File:Class, File, Interface, Data class, Enum class, Annotation, Kotlin script, or Object
 5.	Responses: label each response with an "R", and a numeral order and a timestamp. At the end of the responses, provide a list of files that are modified or created. For example: R18.
 	5.1	All codes need to be in a downloadable file such as x-kotlin file, .kt or xml
-	5.2	In the downloadable file: add comment to the top of each file: full path, updated timestamp, and scope. 
+	5.2	In the downloadable file: add comment to the top of each file: full path, updated timestamp, and scope. Do not use ``` backticks.
 	5.4 Example: 	// File: app/src/main/java/com/example/workoutlogs/ui/workout/CategoriesScreen.kt
 					// Timestamp: Updated onill  2025-05-06 18:30:00
 					// Scope: should explain what the file does. For example: Manages category list shared with ExerciseDetailScreen and other screens
@@ -82,3 +82,15 @@ com.workoutlogs/
 
 When resume:
 Don't forget to follow InstructionsScope at https://github.com/KropSdnir/WorkoutLogs/blob/master/WorkingFiles/WorkoutLogs%20Instructions%20Scope.txt and label your responses like R# and timestamp, and all files with comments with full path, timestamp and scope, no backticks
+
+read Github for latest codes for all files, especially : https://github.com/KropSdnir/WorkoutLogs/blob/master/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt https://github.com/KropSdnir/WorkoutLogs/blob/master/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutViewModel.kt
+
+Make sure to compare number of lines to match new file with original file.
+
+Error:
+> Task :app:compileDebugKotlin FAILED
+e: file:///D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt:122:58 Unresolved reference 'getExerciseById'.
+e: file:///D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutViewModel.kt:29:10 Unresolved reference 'stateIn'.
+e: file:///D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutViewModel.kt:29:34 Unresolved reference 'SharingStarted'.
+e: file:///D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutViewModel.kt:29:72 Cannot infer type for this parameter. Please specify it explicitly.
+

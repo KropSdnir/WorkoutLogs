@@ -1,18 +1,19 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutViewModel.kt
-// Timestamp: 2025-05-14 05:22:00
+// Timestamp: 2025-05-14 18:43:00
 // Scope: ViewModel for managing workout logs in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workoutlogs.data.db.dao.WorkoutLogDao
 import com.example.workoutlogs.data.model.Exercise
 import com.example.workoutlogs.data.model.WorkoutLog
-import com.example.workoutlogs.data.db.dao.WorkoutLogDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -26,7 +27,7 @@ class WorkoutViewModel @Inject constructor(
     val selectedDate: StateFlow<LocalDate> = _selectedDate.asStateFlow()
 
     val workoutLogs: StateFlow<List<WorkoutLog>> = workoutLogDao.getAllWorkoutLogs()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun addWorkoutLog(exercises: List<Exercise>) {
         viewModelScope.launch {

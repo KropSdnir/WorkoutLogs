@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/data/db/dao/WorkoutLogDao.kt
-// Timestamp: 2025-05-14 06:22:00
+// Timestamp: 2025-05-14 18:43:00
 // Scope: Room DAO for workout log operations in WorkoutLogs app
 
 package com.example.workoutlogs.data.db.dao

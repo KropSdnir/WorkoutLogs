@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/di/DatabaseModule.kt
-// Timestamp: 2025-05-14 06:22:00
+// Timestamp: 2025-05-14 18:43:00
 // Scope: Hilt module for providing Room database dependencies in WorkoutLogs app
 
 package com.example.workoutlogs.di
