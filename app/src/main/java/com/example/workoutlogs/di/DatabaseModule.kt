@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/di/DatabaseModule.kt
-// Timestamp: 2025-05-14 21:55:00 CEST
+// Timestamp: 2025-05-14 21:32:00 CEST
 // Scope: Hilt module for providing database and repository dependencies in WorkoutLogs app
 
 package com.example.workoutlogs.di
@@ -7,6 +7,7 @@ package com.example.workoutlogs.di
 import android.content.Context
 import androidx.room.Room
 import com.example.workoutlogs.data.db.AppDatabase
+import com.example.workoutlogs.data.db.dao.CalendarDao
 import com.example.workoutlogs.data.db.dao.ExerciseDao
 import com.example.workoutlogs.data.repository.ExerciseRepository
 import com.example.workoutlogs.data.repository.ExerciseRepositoryImpl
@@ -34,6 +35,12 @@ object DatabaseModule {
     @Singleton
     fun provideExerciseDao(database: AppDatabase): ExerciseDao {
         return database.exerciseDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCalendarDao(database: AppDatabase): CalendarDao {
+        return database.calendarDao()
     }
 
     @Provides
