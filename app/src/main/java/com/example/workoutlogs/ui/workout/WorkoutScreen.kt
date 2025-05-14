@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// Timestamp: 2025-05-14 05:14:00
+// Timestamp: 2025-05-14 06:22:00
 // Scope: Composable screen for managing workouts and displaying selected exercises in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
@@ -27,8 +27,6 @@ import com.example.workoutlogs.data.model.Exercise
 import com.example.workoutlogs.data.model.WorkoutLog
 import com.example.workoutlogs.ui.common.FullCalendarView
 import com.example.workoutlogs.ui.common.SimpleCalendarView
-import com.example.workoutlogs.ui.viewmodel.ExerciseViewModel
-import com.example.workoutlogs.ui.viewmodel.WorkoutViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -79,9 +77,7 @@ fun WorkoutScreen(navController: NavController, viewModel: WorkoutViewModel = hi
                         onClick = {
                             try {
                                 Log.d("WorkoutScreen", "Navigating to workout_exercises")
-                                Log.d("WorkoutScreen", "NavController state: current=${navController.currentDestination?.route}")
                                 navController.navigate("workout_exercises")
-                                Log.d("WorkoutScreen", "Navigation triggered successfully")
                             } catch (e: Exception) {
                                 Log.e("WorkoutScreen", "Navigation error: ${e.message}", e)
                             }

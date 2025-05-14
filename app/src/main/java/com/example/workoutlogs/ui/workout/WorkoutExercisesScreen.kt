@@ -1,6 +1,7 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// 2025-05-13 18:26:00 CEST
-// Composable screen for displaying exercises in WorkoutLogs app
+// Timestamp: 2025-05-14 06:34:00
+// Scope: Composable screen for selecting exercises in WorkoutLogs app
+
 package com.example.workoutlogs.ui.workout
 
 import androidx.compose.foundation.clickable
@@ -13,12 +14,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,11 +23,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.workoutlogs.data.model.Exercise
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutExercisesScreen(
     navController: NavController,
     viewModel: ExerciseViewModel = hiltViewModel()
 ) {
+    val workoutViewModel: WorkoutViewModel = hiltViewModel()
     val exercises by viewModel.exercises.collectAsState()
     val selectedExercises by viewModel.selectedExercises.collectAsState()
     val categories by viewModel.categories.collectAsState()
@@ -137,7 +135,10 @@ fun WorkoutExercisesScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Row {
                     Button(
-                        onClick = { navController.navigate("workout") },
+                        onClick = {
+                            workoutViewModel.addWorkoutLog(selectedExercises)
+                            navController.navigate("workout")
+                        },
                         enabled = selectedExercises.isNotEmpty()
                     ) {
                         Text("Add to Workout")

@@ -29,11 +29,9 @@ Section B. [App Technical Scope]
 7.	Use Model-View-ViewModel (for example: https://www.geeksforgeeks.org/mvvm-model-view-viewmodel-architecture-pattern-in-android/, but give your recommendation if you think you have better ideas in organization and structure).
 
 Section C: Codes modification method.
-1. Verify the original file (286 lines, https://github.com/KropSdnir/WorkoutLogs/...).
-2. Change the BottomAppBar title to "Workout".
-3. Move the "X" button to the "Y" Row.
-4. Preserve all functionality (search, navigation, etc.).
-5. Ensure ~286 lines.
+1. Verify the original file.
+4. Preserve all functionality unless asked specifically to change.
+5. Ensure line counts match closely to the original files when adding features.
 6. Cross-check changes.
 7. Provide artifact and instructions.
 8. If you need to confirm any codes or dependencies, confirm it yourself by scanning the codebase in the specific files in GitHub.
@@ -80,3 +78,7 @@ com.workoutlogs/
 ├── di/
 │   └── AppModule.kt
 └── MainActivity.kt
+
+
+When resume:
+Don't forget to follow InstructionsScope at https://github.com/KropSdnir/WorkoutLogs/blob/master/WorkingFiles/WorkoutLogs%20Instructions%20Scope.txt and label your responses like R# and timestamp, and all files with comments with full path, timestamp and scope, no backticks
