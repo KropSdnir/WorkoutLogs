@@ -1,6 +1,19 @@
-// app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// Timestamp: 2025-05-14 19:03:00
-// Scope: Composable screen for managing workouts and displaying selected exercises in WorkoutLogs app
+// File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
+// Version: 0.0.1 first full boot
+// Timestamp: Updated on 2025-05-12 02:00:00 CEST
+// Scope: Composable screen for managing workouts in WorkoutLogs app
+// Note: Replace the existing WorkoutScreen.kt at
+// D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
+// with this file. Updated ModalBottomSheet for FullCalendarView to appear above BottomAppBar,
+// retains SimpleCalendarView at bottom, long-press calendar, bottom sheet menu, plus navigation.
+// Sourced from R83 provided code.
+// Verify this file is applied correctly by checking the Timestamp, BottomAppBar visibility,
+// FullCalendarView overlay above BottomAppBar, and other functionality.
+// If issues:
+// 1. Share local WorkoutScreen.kt if BottomAppBar is covered, navigation, or calendar position fails.
+// 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
+// 3. Share Logcat for navigation issues (search for "WorkoutScreen: Navigating", "Navigation error").
+// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, WorkoutExercisesScreen.kt.
 
 package com.example.workoutlogs.ui.workout
 
@@ -8,8 +21,6 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarToday
@@ -19,27 +30,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.workoutlogs.data.model.Exercise
-import com.example.workoutlogs.data.model.WorkoutLog
 import com.example.workoutlogs.ui.common.FullCalendarView
 import com.example.workoutlogs.ui.common.SimpleCalendarView
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun WorkoutScreen(navController: NavController, viewModel: WorkoutViewModel = hiltViewModel()) {
-    val exerciseViewModel: ExerciseViewModel = hiltViewModel()
+fun WorkoutScreen(navController: NavController) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var showFullCalendar by remember { mutableStateOf(false) }
     var showMenuSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-    val workoutLogs by viewModel.workoutLogs.collectAsState(initial = emptyList())
-    val logsByDate = workoutLogs.groupBy { it.date }
 
     Scaffold(
         bottomBar = {
@@ -77,7 +80,9 @@ fun WorkoutScreen(navController: NavController, viewModel: WorkoutViewModel = hi
                         onClick = {
                             try {
                                 Log.d("WorkoutScreen", "Navigating to workout_exercises")
+                                Log.d("WorkoutScreen", "NavController state: current=${navController.currentDestination?.route}")
                                 navController.navigate("workout_exercises")
+                                Log.d("WorkoutScreen", "Navigation triggered successfully")
                             } catch (e: Exception) {
                                 Log.e("WorkoutScreen", "Navigation error: ${e.message}", e)
                             }
@@ -99,30 +104,13 @@ fun WorkoutScreen(navController: NavController, viewModel: WorkoutViewModel = hi
                 ),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            LazyColumn(
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                contentAlignment = Alignment.Center
             ) {
-                val selectedDateLogs = logsByDate[selectedDate] ?: emptyList()
-                if (selectedDateLogs.isEmpty()) {
-                    item {
-                        Text(
-                            text = "No exercises added for ${selectedDate.format(DateTimeFormatter.ISO_LOCAL_DATE)}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                } else {
-                    items(selectedDateLogs, key = { it.id }) { log ->
-                        WorkoutLogItem(
-                            log = log,
-                            exercise = exerciseViewModel.getExerciseById(log.exerciseId)
-                        )
-                    }
-                }
+                Text("Screen Placeholder")
             }
             SimpleCalendarView(
                 selectedDate = selectedDate,
@@ -213,42 +201,6 @@ fun WorkoutScreen(navController: NavController, viewModel: WorkoutViewModel = hi
                         .wrapContentHeight()
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun WorkoutLogItem(log: WorkoutLog, exercise: Exercise?) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = exercise?.name ?: "Unknown Exercise",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "Category: ${exercise?.category ?: "N/A"}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Sets: ${log.sets ?: "N/A"}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Reps: ${log.reps ?: "N/A"}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Weight: ${log.weight ?: "N/A"}",
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
     }
 }

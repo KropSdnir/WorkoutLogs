@@ -1,68 +1,116 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutExercisesScreen.kt
-// Timestamp: 2025-05-14 19:10:00
-// Scope: Composable screen for selecting and managing exercises in WorkoutLogs app
-
+// 2025-05-13 18:26:00 CEST
+// Composable screen for displaying exercises in WorkoutLogs app
 package com.example.workoutlogs.ui.workout
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.workoutlogs.data.model.Exercise
-import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkoutExercisesScreen(
     navController: NavController,
-    exerciseViewModel: ExerciseViewModel = hiltViewModel(),
-    workoutViewModel: WorkoutViewModel = hiltViewModel()
+    viewModel: ExerciseViewModel = hiltViewModel()
 ) {
-    val exercises by exerciseViewModel.exercises.collectAsState()
-    val selectedExercises by exerciseViewModel.selectedExercises.collectAsState()
-    val categories by exerciseViewModel.categories.collectAsState()
-    val searchQuery by remember { mutableStateOf(exerciseViewModel.searchQuery) }
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedExerciseId by remember { mutableStateOf<Int?>(null) }
-    var sets by remember { mutableStateOf("") }
-    var reps by remember { mutableStateOf("") }
-    var weight by remember { mutableStateOf("") }
+    val exercises by viewModel.exercises.collectAsState()
+    val selectedExercises by viewModel.selectedExercises.collectAsState()
+    val categories by viewModel.categories.collectAsState()
+    var searchQuery by remember { mutableStateOf(viewModel.searchQuery) }
+    var selectedCategory by remember { mutableStateOf(viewModel.selectedCategory) }
+    var showMenu by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Select Exercises") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            offset = DpOffset(0.dp, (-150).dp)
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Home") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("home")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Calendar") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("home")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Workout") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("workout")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Exercises") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("workout_exercises")
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Settings") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("settings")
+                                }
+                            )
+                        }
                     }
-                },
-                actions = {
+                    IconButton(onClick = { navController.navigate("home") }) {
+                        Icon(Icons.Default.Home, contentDescription = "Home")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = "Workout Exercises",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
                     IconButton(onClick = { navController.navigate("exercise_new") }) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add Exercise"
-                        )
+                        Icon(Icons.Default.Add, contentDescription = "Add Exercise")
                     }
                 }
-            )
+            }
         }
     ) { padding ->
         Column(
@@ -70,161 +118,98 @@ fun WorkoutExercisesScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { exerciseViewModel.updateSearchQuery(it) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                placeholder = { Text("Search exercises...") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search"
-                    )
-                },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { exerciseViewModel.updateSearchQuery("") }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear"
-                            )
-                        }
-                    }
-                }
-            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                FilterChip(
-                    selected = exerciseViewModel.showSelectedOnly,
-                    onClick = { exerciseViewModel.toggleShowSelectedOnly() },
-                    label = { Text("Selected Only") }
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = {
+                        searchQuery = it
+                        viewModel.updateSearchQuery(it)
+                    },
+                    label = { Text("Search Exercises") },
+                    modifier = Modifier.fillMaxWidth(0.6f)
                 )
+                Spacer(modifier = Modifier.width(8.dp))
+                Row {
+                    Button(
+                        onClick = { navController.navigate("workout") },
+                        enabled = selectedExercises.isNotEmpty()
+                    ) {
+                        Text("Add to Workout")
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 var expanded by remember { mutableStateOf(false) }
-                Box {
-                    FilterChip(
-                        selected = exerciseViewModel.selectedCategory.isNotEmpty(),
-                        onClick = { expanded = true },
-                        label = {
-                            Text(
-                                exerciseViewModel.selectedCategory.ifEmpty {
-                                    "All Categories"
-                                }
-                            )
+                OutlinedButton(
+                    onClick = { expanded = true },
+                    modifier = Modifier.fillMaxWidth().weight(1f)
+                ) {
+                    Text(if (selectedCategory.isBlank()) "All Categories" else selectedCategory)
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("All Categories") },
+                        onClick = {
+                            selectedCategory = ""
+                            viewModel.updateSelectedCategory("")
+                            expanded = false
                         }
                     )
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
+                    categories.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text("All Categories") },
+                            text = { Text(category) },
                             onClick = {
-                                exerciseViewModel.updateSelectedCategory("")
+                                selectedCategory = category
+                                viewModel.updateSelectedCategory(category)
                                 expanded = false
                             }
                         )
-                        categories.forEach { category ->
-                            DropdownMenuItem(
-                                text = { Text(category) },
-                                onClick = {
-                                    exerciseViewModel.updateSelectedCategory(category)
-                                    expanded = false
-                                }
-                            )
-                        }
                     }
                 }
-            }
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(exercises, key = { it.id }) { exercise ->
-                    ExerciseItem(
-                        exercise = exercise,
-                        isSelected = exercise.isSelected,
-                        onToggleSelection = { isSelected ->
-                            exerciseViewModel.toggleExerciseSelection(exercise.id, isSelected)
-                        },
-                        onClick = {
-                            selectedExerciseId = exercise.id
-                            showDialog = true
-                        }
-                    )
-                }
-            }
-            if (selectedExercises.isNotEmpty()) {
+                Spacer(modifier = Modifier.width(8.dp))
                 Button(
-                    onClick = { showDialog = true },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+                    onClick = { viewModel.toggleShowSelectedOnly() },
+                    modifier = Modifier.padding(end = 8.dp)
                 ) {
-                    Text("Add Selected to Workout")
+                    Text("Selected")
                 }
             }
-        }
-        if (showDialog && selectedExerciseId != null) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = { Text("Add Workout Log") },
-                text = {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = sets,
-                            onValueChange = { sets = it },
-                            label = { Text("Sets") },
-                            modifier = Modifier.fillMaxWidth()
+            if (exercises.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No exercises yet. Add one!")
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    items(exercises) { exercise ->
+                        ExerciseItem(
+                            exercise = exercise,
+                            onToggleSelection = { viewModel.toggleExerciseSelection(exercise.id, !exercise.isSelected) },
+                            onDetailsClick = { navController.navigate("exercise_details/${exercise.id}") }
                         )
-                        OutlinedTextField(
-                            value = reps,
-                            onValueChange = { reps = it },
-                            label = { Text("Reps") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        OutlinedTextField(
-                            value = weight,
-                            onValueChange = { weight = it },
-                            label = { Text("Weight (kg)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            workoutViewModel.addWorkoutLog(
-                                exerciseId = selectedExerciseId!!,
-                                date = LocalDate.now(),
-                                sets = sets.toIntOrNull(),
-                                reps = reps.toIntOrNull(),
-                                weight = weight.toDoubleOrNull()
-                            )
-                            showDialog = false
-                            sets = ""
-                            reps = ""
-                            weight = ""
-                            selectedExerciseId = null
-                        }
-                    ) {
-                        Text("Add")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        Text("Cancel")
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
-            )
+            }
         }
     }
 }
@@ -232,38 +217,60 @@ fun WorkoutExercisesScreen(
 @Composable
 fun ExerciseItem(
     exercise: Exercise,
-    isSelected: Boolean,
-    onToggleSelection: (Boolean) -> Unit,
-    onClick: () -> Unit
+    onToggleSelection: () -> Unit,
+    onDetailsClick: () -> Unit
 ) {
+    var expanded by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .clickable { onToggleSelection() },
+        colors = CardDefaults.cardColors(
+            containerColor = if (exercise.isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = exercise.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = exercise.category,
+                    text = "Category: ${exercise.category}",
                     style = MaterialTheme.typography.bodyMedium
                 )
+                exercise.notes?.let {
+                    Text(
+                        text = "Notes: $it",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
-            Checkbox(
-                checked = isSelected,
-                onCheckedChange = onToggleSelection
-            )
+            Box {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = "More")
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Details") },
+                        onClick = {
+                            expanded = false
+                            onDetailsClick()
+                        }
+                    )
+                }
+            }
         }
     }
 }
