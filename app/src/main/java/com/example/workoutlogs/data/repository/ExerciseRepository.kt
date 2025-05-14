@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/data/repository/ExerciseRepository.kt
-// Timestamp: 2025-05-14 19:10:00
+// Timestamp: 2025-05-14 19:17:00
 // Scope: Repository for managing exercise data in WorkoutLogs app
 
 package com.example.workoutlogs.data.repository

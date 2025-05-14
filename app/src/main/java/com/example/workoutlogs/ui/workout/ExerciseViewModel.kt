@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/ExerciseViewModel.kt
-// Timestamp: 2025-05-14 19:03:00
+// Timestamp: 2025-05-14 19:13:00
 // Scope: ViewModel for managing exercises in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
