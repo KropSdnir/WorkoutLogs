@@ -1,5 +1,5 @@
 // app/src/main/java/com/example/workoutlogs/data/db/dao/ExerciseDao.kt
-// Timestamp: 2025-05-14 21:09:00 CEST
+// Timestamp: 2025-05-14 21:25:00 CEST
 // Scope: Data Access Object for managing exercises in WorkoutLogs app
 
 package com.example.workoutlogs.data.db.dao

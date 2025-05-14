@@ -1,13 +1,13 @@
 // app/src/main/java/com/example/workoutlogs/ui/workout/ExerciseViewModel.kt
-// Timestamp: 2025-05-14 21:09:00 CEST
+// Timestamp: 2025-05-14 21:25:00 CEST
 // Scope: ViewModel for managing exercises and persistent added exercises in WorkoutLogs app
 
 package com.example.workoutlogs.ui.workout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.workoutlogs.data.db.dao.ExerciseDao
 import com.example.workoutlogs.data.model.Exercise
+import com.example.workoutlogs.data.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
-    private val exerciseDao: ExerciseDao
+    private val exerciseRepository: ExerciseRepository
 ) : ViewModel() {
     private val _exercises = MutableStateFlow<List<Exercise>>(emptyList())
     val exercises: StateFlow<List<Exercise>> = _exercises.asStateFlow()
@@ -48,14 +48,14 @@ class ExerciseViewModel @Inject constructor(
 
     private fun loadExercises() {
         viewModelScope.launch {
-            exerciseDao.getAllExercises().collect { exerciseEntities ->
-                val allExercises = exerciseEntities.map { entity ->
+            exerciseRepository.getAllExercises().collect { exercises ->
+                val allExercises = exercises.map { exercise ->
                     Exercise(
-                        id = entity.id,
-                        name = entity.name,
-                        category = entity.category,
-                        notes = entity.notes,
-                        isSelected = _selectedExercises.value.any { it.id == entity.id }
+                        id = exercise.id,
+                        name = exercise.name,
+                        category = exercise.category,
+                        notes = exercise.notes,
+                        isSelected = _selectedExercises.value.any { it.id == exercise.id }
                     )
                 }
                 _exercises.value = allExercises
@@ -68,9 +68,15 @@ class ExerciseViewModel @Inject constructor(
 
     private fun loadCategories() {
         viewModelScope.launch {
-            exerciseDao.getAllCategories().collect { categoryList ->
+            exerciseRepository.getAllCategories().collect { categoryList ->
                 _categories.value = listOf("") + categoryList
             }
+        }
+    }
+
+    fun insertExercise(exercise: Exercise) {
+        viewModelScope.launch {
+            exerciseRepository.insertExercise(exercise)
         }
     }
 
@@ -112,17 +118,17 @@ class ExerciseViewModel @Inject constructor(
         _searchQuery.value = query
         viewModelScope.launch {
             combine(
-                exerciseDao.getAllExercises(),
+                exerciseRepository.getAllExercises(),
                 _searchQuery,
                 _selectedCategory
-            ) { exerciseEntities, search, category ->
-                exerciseEntities.map { entity ->
+            ) { exercises, search, category ->
+                exercises.map { exercise ->
                     Exercise(
-                        id = entity.id,
-                        name = entity.name,
-                        category = entity.category,
-                        notes = entity.notes,
-                        isSelected = _selectedExercises.value.any { it.id == entity.id }
+                        id = exercise.id,
+                        name = exercise.name,
+                        category = exercise.category,
+                        notes = exercise.notes,
+                        isSelected = _selectedExercises.value.any { it.id == exercise.id }
                     )
                 }.filter { exercise ->
                     (search.isEmpty() || exercise.name.contains(search, ignoreCase = true)) &&

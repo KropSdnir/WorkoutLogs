@@ -1,7 +1,6 @@
-// File: app/src/main/java/com/example/workoutlogs/data/repository/ExerciseRepository.kt
-// Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-10 00:23:00
-// Scope: Repository for exercise-related database operations in WorkoutLogs app
+// app/src/main/java/com/example/workoutlogs/data/repository/ExerciseRepository.kt
+// Timestamp: 2025-05-14 21:25:00 CEST
+// Scope: Repository for managing exercise data in WorkoutLogs app
 
 package com.example.workoutlogs.data.repository
 
@@ -10,26 +9,39 @@ import com.example.workoutlogs.data.model.Exercise
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ExerciseRepository @Inject constructor(
-    private val exerciseDao: ExerciseDao
-) {
-    suspend fun insertExercise(exercise: Exercise) {
-        exerciseDao.insertExercise(exercise)
-    }
+interface ExerciseRepository {
+    fun getAllExercises(): Flow<List<Exercise>>
+    fun getAllCategories(): Flow<List<String>>
+    suspend fun insertExercise(exercise: Exercise)
+    suspend fun updateExercise(exercise: Exercise)
+    suspend fun deleteExercise(exercise: Exercise)
+    suspend fun getExerciseById(id: Int): Exercise?
+}
 
-    fun getAllExercises(): Flow<List<Exercise>> {
+class ExerciseRepositoryImpl @Inject constructor(
+    private val exerciseDao: ExerciseDao
+) : ExerciseRepository {
+    override fun getAllExercises(): Flow<List<Exercise>> {
         return exerciseDao.getAllExercises()
     }
 
-    fun getSelectedExercises(): Flow<List<Exercise>> {
-        return exerciseDao.getSelectedExercises()
+    override fun getAllCategories(): Flow<List<String>> {
+        return exerciseDao.getAllCategories()
     }
 
-    suspend fun updateSelection(id: Int, isSelected: Boolean) {
-        exerciseDao.updateSelection(id, isSelected)
+    override suspend fun insertExercise(exercise: Exercise) {
+        exerciseDao.insertExercise(exercise)
     }
 
-    fun getCategories(): Flow<List<String>> {
-        return exerciseDao.getCategories()
+    override suspend fun updateExercise(exercise: Exercise) {
+        exerciseDao.updateExercise(exercise)
+    }
+
+    override suspend fun deleteExercise(exercise: Exercise) {
+        exerciseDao.deleteExercise(exercise)
+    }
+
+    override suspend fun getExerciseById(id: Int): Exercise? {
+        return exerciseDao.getExerciseById(id)
     }
 }
