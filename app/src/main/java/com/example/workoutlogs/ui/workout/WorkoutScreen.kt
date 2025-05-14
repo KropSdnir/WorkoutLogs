@@ -1,19 +1,8 @@
-// File: app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// Version: 0.0.1 first full boot
-// Timestamp: Updated on 2025-05-12 02:00:00 CEST
-// Scope: Composable screen for managing workouts in WorkoutLogs app
-// Note: Replace the existing WorkoutScreen.kt at
-// D:/Android/Development/WorkoutLogs/WorkoutLogs/app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
-// with this file. Updated ModalBottomSheet for FullCalendarView to appear above BottomAppBar,
-// retains SimpleCalendarView at bottom, long-press calendar, bottom sheet menu, plus navigation.
-// Sourced from R83 provided code.
-// Verify this file is applied correctly by checking the Timestamp, BottomAppBar visibility,
-// FullCalendarView overlay above BottomAppBar, and other functionality.
-// If issues:
-// 1. Share local WorkoutScreen.kt if BottomAppBar is covered, navigation, or calendar position fails.
-// 2. Run 'gradlew :app:assembleDebug --stacktrace' and share stack trace.
-// 3. Share Logcat for navigation issues (search for "WorkoutScreen: Navigating", "Navigation error").
-// 4. Share gradle/libs.versions.toml, app/build.gradle.kts, WorkoutExercisesScreen.kt.
+// app/src/main/java/com/example/workoutlogs/ui/workout/WorkoutScreen.kt
+// Timestamp: 2025-05-14 20:35:00 CEST
+// Scope: Composable screen for managing workouts and displaying selected exercises in WorkoutLogs app
+// Note: Updated to display selected exercises at top, retains SimpleCalendarView at bottom,
+// BottomAppBar, and ModalBottomSheet for FullCalendarView and menu.
 
 package com.example.workoutlogs.ui.workout
 
@@ -21,6 +10,8 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarToday
@@ -31,18 +22,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.workoutlogs.data.model.Exercise
 import com.example.workoutlogs.ui.common.FullCalendarView
 import com.example.workoutlogs.ui.common.SimpleCalendarView
 import java.time.LocalDate
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun WorkoutScreen(navController: NavController) {
+fun WorkoutScreen(navController: NavController, viewModel: ExerciseViewModel = hiltViewModel()) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var showFullCalendar by remember { mutableStateOf(false) }
     var showMenuSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+    val selectedExercises by viewModel.selectedExercises.collectAsState()
 
     Scaffold(
         bottomBar = {
@@ -104,13 +98,37 @@ fun WorkoutScreen(navController: NavController) {
                 ),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(
+            LazyColumn(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                contentPadding = PaddingValues(16.dp)
             ) {
-                Text("Screen Placeholder")
+                if (selectedExercises.isEmpty()) {
+                    item {
+                        Text(
+                            "No exercises added",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                } else {
+                    items(selectedExercises) { exercise ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(8.dp)) {
+                                Text(exercise.name, style = MaterialTheme.typography.titleMedium)
+                                Text("Category: ${exercise.category}", style = MaterialTheme.typography.bodyMedium)
+                                exercise.notes?.let {
+                                    Text("Notes: $it", style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
+                        }
+                    }
+                }
             }
             SimpleCalendarView(
                 selectedDate = selectedDate,
