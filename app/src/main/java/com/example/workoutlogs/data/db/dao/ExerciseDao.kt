@@ -27,4 +27,5 @@ interface ExerciseDao {
 
     @Query("SELECT DISTINCT category FROM exercises")
     fun getCategories(): Flow<List<String>>
+
 }
